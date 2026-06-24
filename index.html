@@ -193,11 +193,15 @@
   .wsheet .moe .moemsg{font-style:italic;font-size:17px;color:var(--cream);line-height:1.4}
   .wsheet h4{font-family:'Cinzel',serif;color:var(--gold-bright);font-weight:500;font-size:18px;
     letter-spacing:2px;text-transform:uppercase;margin:18px 0 6px}
-  .wrow{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px dotted rgba(201,162,75,.18)}
-  .wrow .wn{flex:1;font-size:19px;color:var(--cream)}
-  .wrow .wp{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-bright);white-space:nowrap}
-  .wrow .wx{background:none;border:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0 2px}
-  .wrow .wx:hover{color:var(--gold-bright)}
+  .wrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dotted rgba(201,162,75,.18)}
+  .wrow .wn{flex:1;font-size:19px;color:var(--cream);min-width:0}
+  .wrow .wp{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-bright);white-space:nowrap;min-width:54px;text-align:right}
+  .wqty{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+  .wqty b{min-width:16px;text-align:center;font-size:18px;font-weight:600;color:var(--cream)}
+  .wq{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:transparent;
+    color:var(--gold-bright);font-size:18px;line-height:1;cursor:pointer;display:inline-flex;
+    align-items:center;justify-content:center;flex:0 0 auto}
+  .wq:hover{border-color:var(--gold);background:rgba(201,162,75,.1)}
   .wempty{font-style:italic;color:var(--muted);padding:20px 0;text-align:center}
   .wclear{margin-top:20px;background:none;border:1px solid var(--line);color:var(--muted);
     border-radius:999px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1.5px;
@@ -250,8 +254,8 @@
 
 <div class="wrap">
   <div class="hero">
-    <figure><a href="#sec-tajines"><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></a></figure>
-    <figure><a href="#sec-couscous"><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></a></figure>
+    <figure><a href="#sec-hauptspeisen"><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></a></figure>
+    <figure><a href="#sec-hauptspeisen"><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></a></figure>
   </div>
 </div>
 
@@ -341,7 +345,13 @@ const T = {
 };
 
 const FOOD = [
-  { id:"tajines", title:{de:"Tajines",en:"Tagines",it:"Tajine",sl:"Tažini"},
+  { id:"vorspeisen", title:{de:"Vorspeisen",en:"Starters",it:"Antipasti",sl:"Predjedi"},
+    items:[
+      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},img:"images/souk-tapas.jpg",
+       desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},
+       story:{de:"Eine bunte Auswahl orientalischer Vorspeisen mit Dips, Oliven und warmem Fladenbrot. Der ideale Auftakt für einen geselligen Abend im Le Souk.",en:"A colourful selection of oriental starters with dips, olives and warm flatbread. The perfect opening to a convivial evening at Le Souk.",it:"Una colorata selezione di antipasti orientali con salse, olive e pane caldo. L’inizio perfetto per una serata conviviale al Le Souk.",sl:"Pisana izbira orientalskih predjedi z namazi, olivami in toplim kruhom. Popoln začetek prijetnega večera v Le Souku."},p:"12,50"}
+    ]},
+  { id:"hauptspeisen", title:{de:"Hauptspeisen",en:"Main Courses",it:"Piatti principali",sl:"Glavne jedi"},
     items:[
       {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},img:"images/tajine-vegan.jpg",
        desc:{de:"Saisonales Gemüse, Kichererbsen, Oliven & orientalische Gewürze.",en:"Seasonal vegetables, chickpeas, olives & oriental spices.",it:"Verdure di stagione, ceci, olive e spezie orientali.",sl:"Sezonska zelenjava, čičerika, olive in orientalske začimbe."},
@@ -360,25 +370,16 @@ const FOOD = [
        story:{de:"Lamm karamellisiert langsam mit Aprikosen, Honig und gerösteten Mandeln zu einer süß-würzigen Sauce. Dieses Festtagsgericht spiegelt die opulente Küche Marrakeschs wider.",en:"Lamb caramelises slowly with apricots, honey and toasted almonds into a sweet-savoury sauce. This festive dish reflects the opulent cuisine of Marrakech.",it:"L’agnello caramella lentamente con albicocche, miele e mandorle tostate in una salsa agrodolce. Un piatto delle feste che riflette la cucina sontuosa di Marrakech.",sl:"Jagnjetina se počasi karamelizira z marelicami, medom in praženimi mandlji v sladko-slano omako. Ta praznična jed odraža razkošno kuhinjo Marakeša."},p:"28,90"},
       {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},img:"images/tajine-hafen.jpg",
        desc:{de:"Fisch & Meeresfrüchte in Chermoula mit Tomaten & Paprika.",en:"Fish & seafood in chermoula with tomatoes & peppers.",it:"Pesce e frutti di mare in chermoula con pomodori e peperoni.",sl:"Ribe in morski sadeži v chermouli s paradižnikom in papriko."},
-       story:{de:"Fisch und Meeresfrüchte ziehen in Chermoula – einer Marinade aus Koriander, Knoblauch und Zitrone – und garen mit Tomaten und Paprika. Inspiriert von den Hafenstädten der marokkanischen Atlantikküste.",en:"Fish and seafood marinate in chermoula – coriander, garlic and lemon – then cook with tomatoes and peppers. Inspired by the harbour towns of Morocco’s Atlantic coast.",it:"Pesce e frutti di mare marinano nella chermoula – coriandolo, aglio e limone – e cuociono con pomodori e peperoni. Ispirato alle città portuali della costa atlantica del Marocco.",sl:"Ribe in morski sadeži se marinirajo v chermouli – koriander, česen in limona – nato pa kuhajo s paradižnikom in papriko. Navdih iz pristaniških mest maroške atlantske obale."},p:"33,90"}
-    ]},
-  { id:"couscous", title:"Couscous",
-    items:[
+       story:{de:"Fisch und Meeresfrüchte ziehen in Chermoula – einer Marinade aus Koriander, Knoblauch und Zitrone – und garen mit Tomaten und Paprika. Inspiriert von den Hafenstädten der marokkanischen Atlantikküste.",en:"Fish and seafood marinate in chermoula – coriander, garlic and lemon – then cook with tomatoes and peppers. Inspired by the harbour towns of Morocco’s Atlantic coast.",it:"Pesce e frutti di mare marinano nella chermoula – coriandolo, aglio e limone – e cuociono con pomodori e peperoni. Ispirato alle città portuali della costa atlantica del Marocco.",sl:"Ribe in morski sadeži se marinirajo v chermouli – koriander, česen in limona – nato pa kuhajo s paradižnikom in papriko. Navdih iz pristaniških mest maroške atlantske obale."},p:"33,90"},
       {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},img:"images/hero-couscous.jpg",
        desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},
        story:{de:"Der Grieß wird mehrfach über dem Gemüsesud dampfgegart, bis er federleicht ist. Traditionell wird Couscous am Freitag im Kreis der ganzen Familie serviert.",en:"The semolina is steamed several times over the vegetable broth until feather-light. Traditionally, couscous is served on Fridays with the whole family gathered.",it:"La semola viene cotta al vapore più volte sul brodo di verdure fino a diventare leggerissima. Tradizionalmente il couscous si serve il venerdì con tutta la famiglia riunita.",sl:"Zdrob večkrat parimo nad zelenjavno juho, dokler ni rahel kot pero. Tradicionalno kuskus postrežejo ob petkih, ko se zbere vsa družina."},p:"23,90"},
       {name:"Couscous Royal",img:"images/couscous-royal.jpg",
        desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},
-       story:{de:"Lamm, Hähnchen und würzige Merguez krönen den dampfgegarten Couscous mit Gemüse. „Royal“ steht für die festliche Variante mit gleich drei Fleischsorten.",en:"Lamb, chicken and spicy merguez crown the steamed couscous and vegetables. “Royal” marks the festive version with all three meats at once.",it:"Agnello, pollo e merguez piccante coronano il couscous al vapore con verdure. «Royal» indica la versione delle feste con ben tre tipi di carne.",sl:"Jagnjetina, piščanec in pikantni merguez kronajo parjen kuskus z zelenjavo. »Royal« označuje praznično različico s kar tremi vrstami mesa."},p:"34,60"}
-    ]},
-  { id:"spezialitaeten", title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
-    items:[
+       story:{de:"Lamm, Hähnchen und würzige Merguez krönen den dampfgegarten Couscous mit Gemüse. „Royal“ steht für die festliche Variante mit gleich drei Fleischsorten.",en:"Lamb, chicken and spicy merguez crown the steamed couscous and vegetables. “Royal” marks the festive version with all three meats at once.",it:"Agnello, pollo e merguez piccante coronano il couscous al vapore con verdure. «Royal» indica la versione delle feste con ben tre tipi di carne.",sl:"Jagnjetina, piščanec in pikantni merguez kronajo parjen kuskus z zelenjavo. »Royal« označuje praznično različico s kar tremi vrstami mesa."},p:"34,60"},
       {name:"Le Souk Variation",img:"images/tajine-prunes.jpg",
        desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},
-       story:{de:"Eine Auswahl unserer beliebtesten Spezialitäten auf einem Teller – perfekt zum Teilen und Entdecken. Ideal für alle, die sich einfach nicht entscheiden können.",en:"A selection of our most-loved specialities on one plate – perfect to share and explore. Ideal for anyone who simply can’t choose.",it:"Una selezione delle nostre specialità più amate su un unico piatto – perfetta da condividere e scoprire. Ideale per chi proprio non riesce a decidere.",sl:"Izbor naših najbolj priljubljenih posebnosti na enem krožniku – odlično za deljenje in odkrivanje. Idealno za vse, ki se preprosto ne morejo odločiti."},p:"26,90"},
-      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},img:"images/souk-tapas.jpg",
-       desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},
-       story:{de:"Eine bunte Auswahl orientalischer Vorspeisen mit Dips, Oliven und warmem Fladenbrot. Der ideale Auftakt für einen geselligen Abend im Le Souk.",en:"A colourful selection of oriental starters with dips, olives and warm flatbread. The perfect opening to a convivial evening at Le Souk.",it:"Una colorata selezione di antipasti orientali con salse, olive e pane caldo. L’inizio perfetto per una serata conviviale al Le Souk.",sl:"Pisana izbira orientalskih predjedi z namazi, olivami in toplim kruhom. Popoln začetek prijetnega večera v Le Souku."},p:"12,50"}
+       story:{de:"Eine Auswahl unserer beliebtesten Spezialitäten auf einem Teller – perfekt zum Teilen und Entdecken. Ideal für alle, die sich einfach nicht entscheiden können.",en:"A selection of our most-loved specialities on one plate – perfect to share and explore. Ideal for anyone who simply can’t choose.",it:"Una selezione delle nostre specialità più amate su un unico piatto – perfetta da condividere e scoprire. Ideale per chi proprio non riesce a decidere.",sl:"Izbor naših najbolj priljubljenih posebnosti na enem krožniku – odlično za deljenje in odkrivanje. Idealno za vse, ki se preprosto ne morejo odločiti."},p:"26,90"}
     ]},
   { id:"dessert", title:{de:"Dessert",en:"Desserts",it:"Dolci",sl:"Sladice"},
     items:[
@@ -456,7 +457,7 @@ const DRINKS = [
       {name:"Rosé Spezial",img:"images/rose-wine.jpg",p:"34,80",b:true,
        desc:{de:"Edler Rosé in der Flasche – elegant und fein-fruchtig.",en:"Premium bottled rosé – elegant and finely fruity.",it:"Rosé pregiato in bottiglia – elegante e finemente fruttato.",sl:"Vrhunski rosé v steklenici – eleganten in fino sadkast."}}
     ]},
-  { id:"aperitif", title:{de:"Aperitif & Cocktails",en:"Aperitifs & Cocktails",it:"Aperitivi & Cocktail",sl:"Aperitivi & Koktajli"},
+  { id:"aperitif", title:{de:"Aperitif",en:"Aperitifs",it:"Aperitivi",sl:"Aperitivi"},
     items:[
       {name:"Prosecco",img:"images/prosecco.jpg",p:"5,10 / 23,50",
        desc:{de:"Italienischer Schaumwein – fein perlend und frisch.",en:"Italian sparkling wine – finely sparkling and fresh.",it:"Spumante italiano – dal perlage fine e fresco.",sl:"Italijansko peneče vino – fino in sveže."}},
@@ -466,18 +467,21 @@ const DRINKS = [
        desc:{de:"Aperol mit Sekt – festlich und elegant.",en:"Aperol with sparkling wine – festive and elegant.",it:"Aperol con spumante – festoso ed elegante.",sl:"Aperol s penino – praznično in elegantno."}},
       {name:"Aperol Prosecco",img:"images/aperol.jpg",p:"6,20",
        desc:{de:"Aperol & Prosecco – fruchtig-bitter.",en:"Aperol & prosecco – fruity and bitter.",it:"Aperol e prosecco – fruttato e amaro.",sl:"Aperol in prosecco – sadno-grenko."}},
-      {name:{de:"Spritzer",en:"Wine Spritzer",it:"Spritzer di vino",sl:"Špricer"},img:"images/spritzer.jpg",p:"4,30",
-       desc:{de:"Weißwein mit Soda – leicht und erfrischend.",en:"White wine with soda – light and refreshing.",it:"Vino bianco e soda – leggero e dissetante.",sl:"Belo vino s sodo – lahko in osvežilno."}},
       {name:"Campari Soda",img:"images/campari.jpg",p:"4,80",
        desc:{de:"Italienischer Bitter mit Soda – herb und belebend.",en:"Italian bitter with soda – herbal and invigorating.",it:"Bitter italiano con soda – amaro e tonificante.",sl:"Italijanski bitter s sodo – grenko in poživljajoče."}},
       {name:"Averna",img:"images/averna.jpg",p:"4,80",
        desc:{de:"Sizilianischer Kräuterlikör – sanft und würzig.",en:"Sicilian herbal liqueur – smooth and aromatic.",it:"Amaro siciliano alle erbe – morbido e aromatico.",sl:"Sicilijanski zeliščni liker – mehko in aromatično."}},
       {name:{de:"Averna Sauer",en:"Averna Sour",it:"Averna Sour",sl:"Averna Sour"},img:"images/averna.jpg",p:"6,90",
-       desc:{de:"Averna mit Zitrone – herb-fruchtig.",en:"Averna with lemon – tart and fruity.",it:"Averna con limone – aspro e fruttato.",sl:"Averna z limono – kiselkasto-sadno."}},
+       desc:{de:"Averna mit Zitrone – herb-fruchtig.",en:"Averna with lemon – tart and fruity.",it:"Averna con limone – aspro e fruttato.",sl:"Averna z limono – kiselkasto-sadno."}}
+    ]},
+  { id:"cocktails", title:{de:"Cocktails & Spritzer",en:"Cocktails & Spritz",it:"Cocktail & Spritz",sl:"Koktajli & Špricer"},
+    items:[
       {name:"Gin Tonic",img:"images/gin-tonic.jpg",p:"8,90",
        desc:{de:"Gin & Tonic Water mit Zitrus – klar und spritzig.",en:"Gin & tonic with citrus – clean and crisp.",it:"Gin e tonica con agrumi – pulito e frizzante.",sl:"Gin in tonik z citrusi – čisto in osvežilno."}},
       {name:"Mojito",img:"images/mojito.jpg",p:"9,90",
-       desc:{de:"Rum, Limette, Minze & Soda – kubanischer Klassiker.",en:"Rum, lime, mint & soda – the Cuban classic.",it:"Rum, lime, menta e soda – il classico cubano.",sl:"Rum, limeta, meta in soda – kubanska klasika."}}
+       desc:{de:"Rum, Limette, Minze & Soda – kubanischer Klassiker.",en:"Rum, lime, mint & soda – the Cuban classic.",it:"Rum, lime, menta e soda – il classico cubano.",sl:"Rum, limeta, meta in soda – kubanska klasika."}},
+      {name:{de:"Spritzer",en:"Wine Spritzer",it:"Spritzer di vino",sl:"Špricer"},img:"images/spritzer.jpg",p:"4,30",
+       desc:{de:"Weißwein mit Soda – leicht und erfrischend.",en:"White wine with soda – light and refreshing.",it:"Vino bianco e soda – leggero e dissetante.",sl:"Belo vino s sodo – lahko in osvežilno."}}
     ]},
   { id:"spirituosen", title:{de:"Spirituosen",en:"Spirits",it:"Distillati",sl:"Žgane pijače"},
     items:[
@@ -490,14 +494,23 @@ const DRINKS = [
     ]}
 ];
 
+// Drinks are shown in natural drinking order regardless of data order.
+const DRINK_ORDER=["aperitif","cocktails","wein","bier","alkoholfrei","kaffee-tee","spirituosen"];
+const orderedDrinks=()=>DRINK_ORDER.map(id=>DRINKS.find(s=>s.id===id)).filter(Boolean);
+
 let lang = "de";
 const pick = v => (typeof v === "string") ? v : (v[lang] || v.de);
 
 const REG = {};
-let wish = JSON.parse(localStorage.getItem("lesouk_wish")||"[]");
-const inWish = uid => wish.includes(uid);
+let wish = JSON.parse(localStorage.getItem("lesouk_wish")||"{}");
+if(Array.isArray(wish)){const m={};wish.forEach(u=>m[u]=1);wish=m;}   // migrate old format
+const qty = uid => wish[uid]||0;
+const inWish = uid => qty(uid)>0;
+const wishTotal = () => Object.values(wish).reduce((a,b)=>a+b,0);
 function saveWish(){localStorage.setItem("lesouk_wish",JSON.stringify(wish));}
-function toggleWish(uid){ const k=wish.indexOf(uid); if(k>=0)wish.splice(k,1); else wish.push(uid); saveWish(); updateWishUI(); }
+function setQty(uid,q){ if(q<=0) delete wish[uid]; else wish[uid]=q; saveWish(); updateWishUI(); }
+function addQty(uid,d){ setQty(uid, qty(uid)+d); }
+function toggleWish(uid){ setQty(uid, inWish(uid)?0:1); }
 
 function renderSections(list, showDesc){
   return list.map(sec=>{
@@ -519,7 +532,7 @@ function renderSections(list, showDesc){
 }
 
 function renderCats(){
-  const all=[...FOOD,...DRINKS];
+  const all=[...FOOD,...orderedDrinks()];
   document.getElementById("cats").innerHTML = all.map(sec=>
     `<a href="#sec-${sec.id}" data-target="sec-${sec.id}">${pick(sec.title)}</a>`).join("");
 }
@@ -581,7 +594,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSheet();closeW
 const wOverlay=document.getElementById("wOverlay");
 const wsheet=document.getElementById("wsheet");
 function updateWishUI(){
-  const n=wish.length, fab=document.getElementById("fab");
+  const n=wishTotal(), fab=document.getElementById("fab");
   document.getElementById("fabCount").textContent=n;
   document.querySelector("#fab .fab-text").textContent=pick(T.fabLabel);
   fab.classList.toggle("show", n>0);
@@ -595,17 +608,25 @@ function renderWishList(){
   document.getElementById("moeMsg").textContent=pick(T.moeMsg);
   const clear=document.getElementById("wClear"); clear.textContent=pick(T.wishClear);
   const list=document.getElementById("wList");
-  if(!wish.length){list.innerHTML=`<div class="wempty">${pick(T.wishEmpty)}</div>`;clear.style.display="none";return;}
+  const ids=Object.keys(wish);
+  if(!ids.length){list.innerHTML=`<div class="wempty">${pick(T.wishEmpty)}</div>`;clear.style.display="none";return;}
   clear.style.display="";
-  list.innerHTML=wish.map(uid=>{const it=REG[uid];if(!it)return "";
-    return `<div class="wrow"><span class="wn">${pick(it.name)}</span><span class="wp">€ ${it.p}</span><button class="wx" type="button" data-del="${uid}" aria-label="entfernen">&times;</button></div>`;}).join("");
+  list.innerHTML=ids.map(uid=>{const it=REG[uid];if(!it)return "";
+    return `<div class="wrow">
+      <span class="wn">${pick(it.name)}</span>
+      <span class="wqty"><button class="wq" type="button" data-dec="${uid}" aria-label="weniger">−</button><b>${qty(uid)}</b><button class="wq" type="button" data-inc="${uid}" aria-label="mehr">+</button></span>
+      <span class="wp">€ ${it.p}</span>
+    </div>`;}).join("");
 }
 function openWish(){renderWishList();wsheet.scrollTop=0;wOverlay.classList.add("open");wsheet.classList.add("open");document.body.classList.add("locked");}
 function closeWish(){wOverlay.classList.remove("open");wsheet.classList.remove("open");document.body.classList.remove("locked");}
 document.getElementById("fab").addEventListener("click",openWish);
 wOverlay.addEventListener("click",closeWish);
 document.getElementById("wClose").addEventListener("click",closeWish);
-document.getElementById("wList").addEventListener("click",e=>{const x=e.target.closest(".wx");if(x)toggleWish(x.dataset.del);});
+document.getElementById("wList").addEventListener("click",e=>{
+  const inc=e.target.closest("[data-inc]"); if(inc){addQty(inc.dataset.inc,1);return;}
+  const dec=e.target.closest("[data-dec]"); if(dec){addQty(dec.dataset.dec,-1);return;}
+});
 document.getElementById("wClear").addEventListener("click",()=>{wish=[];saveWish();updateWishUI();});
 
 /* ----- one-time click wiring (containers persist across re-renders) ----- */
@@ -638,7 +659,7 @@ function render(){
 
   document.getElementById("menu").innerHTML =
     `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD,true)}` +
-    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(DRINKS,false)}`;
+    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(orderedDrinks(),false)}`;
 
   renderCats();
   setupScrollSpy();
