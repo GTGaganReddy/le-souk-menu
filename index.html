@@ -75,9 +75,9 @@
   .cats a:hover{color:var(--gold-bright)}
   .cats a.active{color:var(--black);background:var(--gold-bright);border-color:var(--gold-bright)}
 
-  /* anchored sections clear the sticky bar */
-  html{scroll-padding-top:120px}
-  .section,.group-title{scroll-margin-top:120px}
+  /* anchored sections clear the sticky bar (single offset, ~bar height) */
+  html{scroll-padding-top:0}
+  .section,.group-title{scroll-margin-top:102px}
   .hero a{display:block;cursor:pointer}
 
   /* ---- Header ---- */
@@ -119,14 +119,42 @@
   .section h3::after{content:"";flex:1;height:1px;background:var(--line)}
   .section .note{font-style:italic;color:var(--muted);font-size:14px;margin-bottom:12px}
 
-  .item{display:flex;align-items:baseline;gap:8px;padding:9px 0;border-bottom:1px dotted rgba(201,162,75,.18)}
+  .item{display:flex;align-items:baseline;gap:8px;padding:11px 6px;width:100%;text-align:left;
+    background:none;border:none;border-bottom:1px dotted rgba(201,162,75,.18);
+    color:inherit;font:inherit;border-radius:6px}
   .item:last-child{border-bottom:none}
-  .item .name{font-weight:600;font-size:20px;color:var(--cream);white-space:nowrap}
+  .item.tap{cursor:pointer;transition:background .2s}
+  .item.tap:hover,.item.tap:active{background:rgba(201,162,75,.08)}
+  .item .name{font-weight:600;font-size:20px;color:var(--cream)}
+  .item .info{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);opacity:.7;margin-left:7px;border:1px solid var(--line);border-radius:50%;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
   .item .desc{display:block;font-style:italic;font-weight:400;font-size:16px;color:var(--muted);white-space:normal;margin-top:1px}
   .item .lead{flex:1;border-bottom:1px dotted rgba(201,162,75,.35);transform:translateY(-4px);min-width:14px}
   .item .price{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-bright);white-space:nowrap;letter-spacing:.5px}
   .item .price small{color:var(--muted);font-size:12px}
-  .left{flex:1}
+  .left{flex:1;min-width:0}
+
+  /* ---- Dish / drink detail sheet (half screen) ---- */
+  .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);
+    opacity:0;pointer-events:none;transition:opacity .3s}
+  .overlay.open{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;
+    max-width:var(--maxw);margin:0 auto;
+    background:var(--panel);border:1px solid var(--line);border-bottom:none;
+    border-radius:20px 20px 0 0;box-shadow:0 -16px 50px rgba(0,0,0,.6);
+    transform:translateY(102%);transition:transform .34s cubic-bezier(.2,.8,.2,1);
+    max-height:82vh;overflow-y:auto}
+  .sheet.open{transform:translateY(0)}
+  .sheet .grip{width:42px;height:4px;border-radius:99px;background:var(--line);margin:10px auto 0}
+  .sheet .shimg{height:240px;background-size:cover;background-position:center;margin:14px 16px 0;border-radius:12px;border:1px solid var(--line)}
+  .sheet .shimg.ph{display:flex;align-items:center;justify-content:center;background:#0d0d10}
+  .sheet .shimg.ph img{width:120px;opacity:.85}
+  .sheet .shbody{padding:18px 22px 30px}
+  .sheet .shhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .sheet h4{font-family:'Cinzel',serif;color:var(--gold-bright);font-weight:500;font-size:21px;letter-spacing:1px}
+  .sheet .shprice{font-family:'Cinzel',serif;color:var(--gold-bright);font-size:18px;white-space:nowrap}
+  .sheet .shdesc{font-size:19px;font-style:italic;color:var(--cream);margin-top:12px;line-height:1.55}
+  .sheet .shclose{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+  body.locked{overflow:hidden}
 
   /* ---- Storefront strip ---- */
   .sign{margin:46px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -198,6 +226,17 @@
   <div class="copyright" id="copy"></div>
 </footer>
 
+<div class="overlay" id="overlay"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detail">
+  <button class="shclose" id="shClose" aria-label="Schließen">&times;</button>
+  <div class="grip"></div>
+  <div class="shimg" id="shImg"></div>
+  <div class="shbody">
+    <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
+    <p class="shdesc" id="shDesc"></p>
+  </div>
+</aside>
+
 <script>
 /* ============ MENU DATA ============
    Prices read from the Le Souk POS terminal.
@@ -235,21 +274,21 @@ const FOOD = [
        desc:{de:"Zartes Hähnchen, eingelegte Zitrone, grüne Oliven & Safran.",en:"Tender chicken, preserved lemon, green olives & saffron.",it:"Pollo tenero, limone in salamoia, olive verdi e zafferano.",sl:"Mehki piščanec, vložena limona, zelene olive in žafran."},p:"21,90"},
       {name:"Tajine Klagenfurt",
        desc:{de:"Rindfleisch nach Le-Souk-Art, regionales Gemüse & milde Gewürze.",en:"Beef Le Souk style, regional vegetables & mild spices.",it:"Manzo stile Le Souk, verdure regionali e spezie delicate.",sl:"Govedina po Le Souk, lokalna zelenjava in blage začimbe."},p:"23,90"},
-      {name:"Tajine Marrakesch",
+      {name:"Tajine Marrakesch",img:"images/hero-tajine.jpg",
        desc:{de:"Lammfleisch, Aprikosen, Mandeln & Honig-Gewürzsauce.",en:"Lamb, apricots, almonds & honey-spiced sauce.",it:"Agnello, albicocche, mandorle e salsa al miele speziata.",sl:"Jagnjetina, marelice, mandlji in medeno-začimbna omaka."},p:"28,90"},
       {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},
        desc:{de:"Fisch & Meeresfrüchte in Chermoula mit Tomaten & Paprika.",en:"Fish & seafood in chermoula with tomatoes & peppers.",it:"Pesce e frutti di mare in chermoula con pomodori e peperoni.",sl:"Ribe in morski sadeži v chermouli s paradižnikom in papriko."},p:"33,90"}
     ]},
   { id:"couscous", title:"Couscous",
     items:[
-      {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},
+      {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},img:"images/hero-couscous.jpg",
        desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},p:"23,90"},
       {name:"Couscous Royal",
        desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},p:"34,60"}
     ]},
   { id:"spezialitaeten", title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
     items:[
-      {name:"Le Souk Variation",
+      {name:"Le Souk Variation",img:"images/tajine-prunes.jpg",
        desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},p:"26,90"},
       {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},
        desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},p:"12,50"}
@@ -267,10 +306,13 @@ const DRINKS = [
   { id:"kaffee-tee", title:{de:"Kaffee & Tee",en:"Coffee & Tea",it:"Caffè & Tè",sl:"Kava & Čaj"},
     items:[
       {name:"Espresso",p:"3,10"},
-      {name:{de:"Verlängerter",en:"Lungo (Verlängerter)",it:"Caffè Lungo",sl:"Podaljšana kava"},p:"3,90"},
+      {name:{de:"Verlängerter",en:"Lungo (Verlängerter)",it:"Caffè Lungo",sl:"Podaljšana kava"},p:"3,90",
+       desc:{de:"Österreichischer Klassiker – Espresso, verlängert mit heißem Wasser.",en:"Austrian classic – espresso lengthened with hot water.",it:"Classico austriaco – espresso allungato con acqua calda.",sl:"Avstrijska klasika – espresso, podaljšan z vročo vodo."}},
       {name:"Cappuccino",p:"4,10"},
-      {name:{de:"Souk Kaffee",en:"Souk Coffee",it:"Caffè Souk",sl:"Souk kava"},p:"5,10"},
-      {name:{de:"Le Souk Tee (Minze)",en:"Le Souk Tea (Mint)",it:"Tè Le Souk (Menta)",sl:"Le Souk čaj (meta)"},p:"5,20"}
+      {name:{de:"Souk Kaffee",en:"Souk Coffee",it:"Caffè Souk",sl:"Souk kava"},p:"5,10",
+       desc:{de:"Unsere Hausspezialität mit orientalischen Gewürzen.",en:"Our house speciality with oriental spices.",it:"La nostra specialità con spezie orientali.",sl:"Naša hišna posebnost z orientalskimi začimbami."}},
+      {name:{de:"Le Souk Tee (Minze)",en:"Le Souk Tea (Mint)",it:"Tè Le Souk (Menta)",sl:"Le Souk čaj (meta)"},p:"5,20",
+       desc:{de:"Marokkanischer Minztee aus Gunpowder-Grüntee & frischer Minze.",en:"Moroccan mint tea with gunpowder green tea & fresh mint.",it:"Tè alla menta marocchino con tè verde gunpowder e menta fresca.",sl:"Maroški metin čaj z zelenim čajem gunpowder in svežo meto."}}
     ]},
   { id:"alkoholfrei", title:{de:"Alkoholfreie Getränke",en:"Soft Drinks",it:"Analcolici",sl:"Brezalkoholne pijače"},
     items:[
@@ -290,34 +332,56 @@ const DRINKS = [
     ]},
   { id:"wein", title:{de:"Wein",en:"Wine",it:"Vino",sl:"Vino"}, gb:true,
     items:[
-      {name:{de:"Grüner Veltliner",en:"Grüner Veltliner",it:"Grüner Veltliner",sl:"Grüner Veltliner"},p:"4,20 / 24,60"},
-      {name:"Muskateller",p:"4,80"},
-      {name:"Sauvignon Blanc",p:"5,80"},
-      {name:"Rosé",p:"5,80 / 33,80"},
-      {name:"Cabernet Sauvignon",p:"4,40 / 23,50"},
-      {name:{de:"Cuvée Rot",en:"Cuvée Red",it:"Cuvée Rosso",sl:"Cuvée rdeče"},p:"5,60 / 33,80"},
-      {name:"Syrah",p:"5,60"},
-      {name:"Beaujolais",p:"5,60"},
-      {name:"Cuvée 2021",p:"34,60",b:true},
-      {name:"Parallèle 45",p:"39,20",b:true},
-      {name:"Rosé Spezial",p:"34,80",b:true}
+      {name:{de:"Grüner Veltliner",en:"Grüner Veltliner",it:"Grüner Veltliner",sl:"Grüner Veltliner"},p:"4,20 / 24,60",
+       desc:{de:"Österreichs Aushängeschild – frisch, würzig, mit feiner Pfeffernote.",en:"Austria’s flagship white – crisp, spicy, with a hint of pepper.",it:"Il bianco simbolo dell’Austria – fresco, speziato, con note di pepe.",sl:"Avstrijska prepoznavna sorta – sveže, začinjeno, z noto popra."}},
+      {name:"Muskateller",p:"4,80",
+       desc:{de:"Aromatischer Weißwein mit blumigem Muskatduft.",en:"Aromatic white with a floral muscat bouquet.",it:"Bianco aromatico dal profumo floreale di moscato.",sl:"Aromatično belo vino s cvetličnim vonjem muškata."}},
+      {name:"Sauvignon Blanc",p:"5,80",
+       desc:{de:"Spritzig und grün – Noten von Stachelbeere und Paprika.",en:"Zesty and green – notes of gooseberry and bell pepper.",it:"Vivace e verde – note di uva spina e peperone.",sl:"Živahno in zeleno – note kosmulje in paprike."}},
+      {name:"Rosé",p:"5,80 / 33,80",
+       desc:{de:"Leichter Sommerwein, fruchtig und trocken.",en:"Light summer wine, fruity and dry.",it:"Vino estivo leggero, fruttato e secco.",sl:"Lahko poletno vino, sadno in suho."}},
+      {name:"Cabernet Sauvignon",p:"4,40 / 23,50",
+       desc:{de:"Kräftiger Rotwein mit dunklen Beeren und feinem Tannin.",en:"Full-bodied red with dark berries and fine tannins.",it:"Rosso corposo con frutti scuri e tannini fini.",sl:"Polno rdeče vino s temnimi jagodami in finimi tanini."}},
+      {name:{de:"Cuvée Rot",en:"Cuvée Red",it:"Cuvée Rosso",sl:"Cuvée rdeče"},p:"5,60 / 33,80",
+       desc:{de:"Unsere Hausassemblage – samtig und ausgewogen.",en:"Our house blend – velvety and balanced.",it:"Il nostro blend della casa – vellutato ed equilibrato.",sl:"Naša hišna zvrst – žametno in uravnoteženo."}},
+      {name:"Syrah",p:"5,60",
+       desc:{de:"Würziger Rotwein mit Pfeffer und dunkler Frucht.",en:"Spicy red with pepper and dark fruit.",it:"Rosso speziato con pepe e frutta scura.",sl:"Začinjeno rdeče vino s poprom in temnim sadjem."}},
+      {name:"Beaujolais",p:"5,60",
+       desc:{de:"Frankreich, Gamay-Traube – leicht, fruchtig, kühl serviert.",en:"France, Gamay grape – light, fruity, served cool.",it:"Francia, uva Gamay – leggero, fruttato, servito fresco.",sl:"Francija, sorta Gamay – lahko, sadno, postreženo ohlajeno."}},
+      {name:"Cuvée 2021",p:"34,60",b:true,
+       desc:{de:"Reife Jahrgangs-Cuvée – kräftig und langanhaltend.",en:"Mature vintage blend – powerful and long-lasting.",it:"Cuvée d’annata matura – potente e persistente.",sl:"Zrela letniška zvrst – močna in dolgotrajna."}},
+      {name:"Parallèle 45",p:"39,20",b:true,
+       desc:{de:"Côtes du Rhône, Frankreich – Grenache & Syrah, würzig-rund.",en:"Côtes du Rhône, France – Grenache & Syrah, spicy and round.",it:"Côtes du Rhône, Francia – Grenache e Syrah, speziato e rotondo.",sl:"Côtes du Rhône, Francija – Grenache in Syrah, začinjeno in zaokroženo."}},
+      {name:"Rosé Spezial",p:"34,80",b:true,
+       desc:{de:"Edler Rosé in der Flasche – elegant und fein-fruchtig.",en:"Premium bottled rosé – elegant and finely fruity.",it:"Rosé pregiato in bottiglia – elegante e finemente fruttato.",sl:"Vrhunski rosé v steklenici – eleganten in fino sadkast."}}
     ]},
   { id:"aperitif", title:{de:"Aperitif & Cocktails",en:"Aperitifs & Cocktails",it:"Aperitivi & Cocktail",sl:"Aperitivi & Koktajli"},
     items:[
-      {name:"Prosecco",p:"5,10 / 23,50"},
-      {name:"Aperol Spritz",p:"5,10"},
-      {name:"Aperol Royal",p:"6,80"},
-      {name:"Aperol Prosecco",p:"6,20"},
-      {name:{de:"Spritzer",en:"Wine Spritzer",it:"Spritzer di vino",sl:"Špricer"},p:"4,30"},
-      {name:"Campari Soda",p:"4,80"},
-      {name:"Averna",p:"4,80"},
-      {name:{de:"Averna Sauer",en:"Averna Sour",it:"Averna Sour",sl:"Averna Sour"},p:"6,90"},
-      {name:"Gin Tonic",p:"8,90"},
-      {name:"Mojito",p:"9,90"}
+      {name:"Prosecco",p:"5,10 / 23,50",
+       desc:{de:"Italienischer Schaumwein – fein perlend und frisch.",en:"Italian sparkling wine – finely sparkling and fresh.",it:"Spumante italiano – dal perlage fine e fresco.",sl:"Italijansko peneče vino – fino in sveže."}},
+      {name:"Aperol Spritz",p:"5,10",
+       desc:{de:"Aperol, Prosecco & Soda – der italienische Aperitif-Klassiker.",en:"Aperol, prosecco & soda – the classic Italian aperitif.",it:"Aperol, prosecco e soda – il classico aperitivo italiano.",sl:"Aperol, prosecco in soda – klasični italijanski aperitiv."}},
+      {name:"Aperol Royal",p:"6,80",
+       desc:{de:"Aperol mit Sekt – festlich und elegant.",en:"Aperol with sparkling wine – festive and elegant.",it:"Aperol con spumante – festoso ed elegante.",sl:"Aperol s penino – praznično in elegantno."}},
+      {name:"Aperol Prosecco",p:"6,20",
+       desc:{de:"Aperol & Prosecco – fruchtig-bitter.",en:"Aperol & prosecco – fruity and bitter.",it:"Aperol e prosecco – fruttato e amaro.",sl:"Aperol in prosecco – sadno-grenko."}},
+      {name:{de:"Spritzer",en:"Wine Spritzer",it:"Spritzer di vino",sl:"Špricer"},p:"4,30",
+       desc:{de:"Weißwein mit Soda – leicht und erfrischend.",en:"White wine with soda – light and refreshing.",it:"Vino bianco e soda – leggero e dissetante.",sl:"Belo vino s sodo – lahko in osvežilno."}},
+      {name:"Campari Soda",p:"4,80",
+       desc:{de:"Italienischer Bitter mit Soda – herb und belebend.",en:"Italian bitter with soda – herbal and invigorating.",it:"Bitter italiano con soda – amaro e tonificante.",sl:"Italijanski bitter s sodo – grenko in poživljajoče."}},
+      {name:"Averna",p:"4,80",
+       desc:{de:"Sizilianischer Kräuterlikör – sanft und würzig.",en:"Sicilian herbal liqueur – smooth and aromatic.",it:"Amaro siciliano alle erbe – morbido e aromatico.",sl:"Sicilijanski zeliščni liker – mehko in aromatično."}},
+      {name:{de:"Averna Sauer",en:"Averna Sour",it:"Averna Sour",sl:"Averna Sour"},p:"6,90",
+       desc:{de:"Averna mit Zitrone – herb-fruchtig.",en:"Averna with lemon – tart and fruity.",it:"Averna con limone – aspro e fruttato.",sl:"Averna z limono – kiselkasto-sadno."}},
+      {name:"Gin Tonic",p:"8,90",
+       desc:{de:"Gin & Tonic Water mit Zitrus – klar und spritzig.",en:"Gin & tonic with citrus – clean and crisp.",it:"Gin e tonica con agrumi – pulito e frizzante.",sl:"Gin in tonik z citrusi – čisto in osvežilno."}},
+      {name:"Mojito",p:"9,90",
+       desc:{de:"Rum, Limette, Minze & Soda – kubanischer Klassiker.",en:"Rum, lime, mint & soda – the Cuban classic.",it:"Rum, lime, menta e soda – il classico cubano.",sl:"Rum, limeta, meta in soda – kubanska klasika."}}
     ]},
   { id:"spirituosen", title:{de:"Spirituosen",en:"Spirits",it:"Distillati",sl:"Žgane pijače"},
     items:[
-      {name:"Jack Daniel's",p:"5,90"},
+      {name:"Jack Daniel's",p:"5,90",
+       desc:{de:"Tennessee Whiskey aus den USA – mild und rauchig.",en:"Tennessee whiskey from the USA – mellow and smoky.",it:"Whiskey del Tennessee (USA) – morbido e affumicato.",sl:"Tennessee whiskey iz ZDA – mehko in zadimljeno."}},
       {name:{de:"Shot",en:"Shot",it:"Shot",sl:"Šilce"},p:"5,80"},
       {name:{de:"Spirituosen (diverse)",en:"Spirits (various)",it:"Distillati (vari)",sl:"Žgane pijače (razno)"},p:"ab 3,90"}
     ]}
@@ -326,17 +390,22 @@ const DRINKS = [
 let lang = "de";
 const pick = v => (typeof v === "string") ? v : (v[lang] || v.de);
 
+const REG = {};
 function renderSections(list){
   return list.map(sec=>{
     const note = sec.gb ? `<div class="note">${pick(T.glassBottle)}</div>` : "";
-    const rows = sec.items.map(it=>{
-      const desc = it.desc ? `<span class="desc">${pick(it.desc)}</span>` : "";
+    const rows = sec.items.map((it,idx)=>{
+      const uid = sec.id+"-"+idx; REG[uid]=it;
+      const tap = !!(it.desc || it.img);
       const bt = it.b ? ` <small>${pick(T.bottle)}</small>` : "";
-      return `<div class="item">
-        <span class="left"><span class="name">${pick(it.name)}</span>${desc}</span>
+      const info = tap ? `<span class="info" aria-hidden="true">i</span>` : "";
+      const tag = tap ? "button" : "div";
+      const attr = tap ? ` type="button" data-uid="${uid}"` : "";
+      return `<${tag} class="item${tap?" tap":""}"${attr}>
+        <span class="left"><span class="name">${pick(it.name)}</span>${info}</span>
         <span class="lead"></span>
         <span class="price">€ ${it.p}${bt}</span>
-      </div>`;
+      </${tag}>`;
     }).join("");
     return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${note}${rows}</div>`;
   }).join("");
@@ -351,19 +420,60 @@ function renderCats(){
 let spy;
 function setupScrollSpy(){
   if(spy) spy.disconnect();
-  const links=[...document.querySelectorAll(".cats a")];
+  const cats=document.getElementById("cats");
+  const links=[...cats.querySelectorAll("a")];
   const byId=Object.fromEntries(links.map(a=>[a.dataset.target,a]));
   spy=new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       if(e.isIntersecting){
+        const a=byId[e.target.id]; if(!a) return;
         links.forEach(l=>l.classList.remove("active"));
-        const a=byId[e.target.id];
-        if(a){a.classList.add("active");a.scrollIntoView({inline:"center",block:"nearest"});}
+        a.classList.add("active");
+        // center the active chip WITHIN its own bar only (never scrolls the page)
+        const r=a.getBoundingClientRect(), cr=cats.getBoundingClientRect();
+        cats.scrollBy({left:(r.left+r.width/2)-(cr.left+cr.width/2),behavior:"smooth"});
       }
     });
-  },{rootMargin:"-125px 0px -70% 0px",threshold:0});
+  },{rootMargin:"-130px 0px -68% 0px",threshold:0});
   document.querySelectorAll(".section").forEach(s=>spy.observe(s));
 }
+
+function scrollToSec(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ----- detail sheet ----- */
+const overlay=document.getElementById("overlay");
+const sheet=document.getElementById("sheet");
+function openSheet(it){
+  document.getElementById("shName").textContent=pick(it.name);
+  document.getElementById("shPrice").textContent="€ "+it.p;
+  const d=document.getElementById("shDesc");
+  d.textContent=it.desc?pick(it.desc):"";
+  d.style.display=it.desc?"":"none";
+  const img=document.getElementById("shImg");
+  if(it.img){img.className="shimg";img.style.backgroundImage="url('"+it.img+"')";img.innerHTML="";}
+  else{img.className="shimg ph";img.style.backgroundImage="none";img.innerHTML='<img src="images/logo.jpg" alt="">';}
+  overlay.classList.add("open");sheet.classList.add("open");document.body.classList.add("locked");
+}
+function closeSheet(){overlay.classList.remove("open");sheet.classList.remove("open");document.body.classList.remove("locked");}
+overlay.addEventListener("click",closeSheet);
+document.getElementById("shClose").addEventListener("click",closeSheet);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
+
+/* ----- one-time click wiring (containers persist across re-renders) ----- */
+document.getElementById("menu").addEventListener("click",e=>{
+  const row=e.target.closest(".item.tap"); if(!row) return;
+  const it=REG[row.dataset.uid]; if(it) openSheet(it);
+});
+document.getElementById("cats").addEventListener("click",e=>{
+  const a=e.target.closest("a"); if(!a) return;
+  e.preventDefault(); scrollToSec(a.dataset.target);
+});
+document.querySelectorAll(".hero a").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault(); scrollToSec(a.getAttribute("href").slice(1));
+}));
 
 function render(){
   document.documentElement.lang = lang;
