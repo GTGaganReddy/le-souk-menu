@@ -42,13 +42,15 @@
   img{display:block;max-width:100%}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
 
-  /* ---- Language switch ---- */
-  .lang{
+  /* ---- Sticky top bar (language + category jump) ---- */
+  .topbar{
     position:sticky;top:0;z-index:20;
-    background:rgba(11,11,12,.82);backdrop-filter:blur(8px);
+    background:rgba(11,11,12,.92);backdrop-filter:blur(9px);
     border-bottom:1px solid var(--line);
+  }
+  .lang{
     display:flex;justify-content:center;gap:6px;
-    padding:9px 10px;
+    padding:9px 10px 7px;
   }
   .lang button{
     font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;
@@ -57,6 +59,26 @@
   }
   .lang button:hover{color:var(--gold-bright)}
   .lang button.active{color:var(--black);background:var(--gold);border-color:var(--gold)}
+
+  /* category jump chips */
+  .cats{
+    display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;
+    padding:3px 14px 9px;border-top:1px solid rgba(201,162,75,.14);
+  }
+  .cats::-webkit-scrollbar{display:none}
+  .cats a{
+    flex:0 0 auto;text-decoration:none;
+    font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--line);border-radius:999px;
+    padding:5px 13px;transition:.2s;white-space:nowrap;
+  }
+  .cats a:hover{color:var(--gold-bright)}
+  .cats a.active{color:var(--black);background:var(--gold-bright);border-color:var(--gold-bright)}
+
+  /* anchored sections clear the sticky bar */
+  html{scroll-padding-top:120px}
+  .section,.group-title{scroll-margin-top:120px}
+  .hero a{display:block;cursor:pointer}
 
   /* ---- Header ---- */
   header{text-align:center;padding:40px 0 14px}
@@ -133,12 +155,15 @@
 </head>
 <body>
 
-<nav class="lang" id="lang" aria-label="Sprache wählen">
-  <button data-lang="de">DE</button>
-  <button data-lang="en">EN</button>
-  <button data-lang="it">IT</button>
-  <button data-lang="sl">SL</button>
-</nav>
+<div class="topbar">
+  <nav class="lang" id="lang" aria-label="Sprache wählen">
+    <button data-lang="de">DE</button>
+    <button data-lang="en">EN</button>
+    <button data-lang="it">IT</button>
+    <button data-lang="sl">SL</button>
+  </nav>
+  <nav class="cats" id="cats" aria-label="Kategorien"></nav>
+</div>
 
 <header class="wrap">
   <img class="logo" src="images/logo.jpg" alt="Le Souk Logo">
@@ -149,8 +174,8 @@
 
 <div class="wrap">
   <div class="hero">
-    <figure><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></figure>
-    <figure><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></figure>
+    <figure><a href="#sec-tajines"><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></a></figure>
+    <figure><a href="#sec-couscous"><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></a></figure>
   </div>
 </div>
 
@@ -200,7 +225,7 @@ const T = {
 };
 
 const FOOD = [
-  { title:{de:"Tajines",en:"Tagines",it:"Tajine",sl:"Tažini"},
+  { id:"tajines", title:{de:"Tajines",en:"Tagines",it:"Tajine",sl:"Tažini"},
     items:[
       {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},
        desc:{de:"Saisonales Gemüse, Kichererbsen, Oliven & orientalische Gewürze.",en:"Seasonal vegetables, chickpeas, olives & oriental spices.",it:"Verdure di stagione, ceci, olive e spezie orientali.",sl:"Sezonska zelenjava, čičerika, olive in orientalske začimbe."},p:"13,90"},
@@ -215,21 +240,21 @@ const FOOD = [
       {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},
        desc:{de:"Fisch & Meeresfrüchte in Chermoula mit Tomaten & Paprika.",en:"Fish & seafood in chermoula with tomatoes & peppers.",it:"Pesce e frutti di mare in chermoula con pomodori e peperoni.",sl:"Ribe in morski sadeži v chermouli s paradižnikom in papriko."},p:"33,90"}
     ]},
-  { title:"Couscous",
+  { id:"couscous", title:"Couscous",
     items:[
       {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},
        desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},p:"23,90"},
       {name:"Couscous Royal",
        desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},p:"34,60"}
     ]},
-  { title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
+  { id:"spezialitaeten", title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
     items:[
       {name:"Le Souk Variation",
        desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},p:"26,90"},
       {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},
        desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},p:"12,50"}
     ]},
-  { title:{de:"Dessert",en:"Desserts",it:"Dolci",sl:"Sladice"},
+  { id:"dessert", title:{de:"Dessert",en:"Desserts",it:"Dolci",sl:"Sladice"},
     items:[
       {name:{de:"Souk-Dessert",en:"Souk Dessert",it:"Dolce Souk",sl:"Souk Sladica"},
        desc:{de:"Hausgemachte marokkanische Süßspeise des Tages.",en:"Homemade Moroccan sweet of the day.",it:"Dolce marocchino del giorno fatto in casa.",sl:"Domača maroška sladica dneva."},p:"7,20"},
@@ -239,7 +264,7 @@ const FOOD = [
 ];
 
 const DRINKS = [
-  { title:{de:"Kaffee & Tee",en:"Coffee & Tea",it:"Caffè & Tè",sl:"Kava & Čaj"},
+  { id:"kaffee-tee", title:{de:"Kaffee & Tee",en:"Coffee & Tea",it:"Caffè & Tè",sl:"Kava & Čaj"},
     items:[
       {name:"Espresso",p:"3,10"},
       {name:{de:"Verlängerter",en:"Lungo (Verlängerter)",it:"Caffè Lungo",sl:"Podaljšana kava"},p:"3,90"},
@@ -247,7 +272,7 @@ const DRINKS = [
       {name:{de:"Souk Kaffee",en:"Souk Coffee",it:"Caffè Souk",sl:"Souk kava"},p:"5,10"},
       {name:{de:"Le Souk Tee (Minze)",en:"Le Souk Tea (Mint)",it:"Tè Le Souk (Menta)",sl:"Le Souk čaj (meta)"},p:"5,20"}
     ]},
-  { title:{de:"Alkoholfreie Getränke",en:"Soft Drinks",it:"Analcolici",sl:"Brezalkoholne pijače"},
+  { id:"alkoholfrei", title:{de:"Alkoholfreie Getränke",en:"Soft Drinks",it:"Analcolici",sl:"Brezalkoholne pijače"},
     items:[
       {name:"Cola / Fanta",p:"4,80"},
       {name:{de:"Pago Fruchtsaft",en:"Pago Juice",it:"Succo Pago",sl:"Sok Pago"},p:"4,80"},
@@ -255,7 +280,7 @@ const DRINKS = [
       {name:{de:"Soda Zitrone",en:"Soda Lemon",it:"Soda Limone",sl:"Soda limona"},p:"3,10 / 4,20"},
       {name:{de:"Mineralwasser",en:"Mineral Water",it:"Acqua minerale",sl:"Mineralna voda"},p:"4,30"}
     ]},
-  { title:{de:"Bier",en:"Beer",it:"Birra",sl:"Pivo"},
+  { id:"bier", title:{de:"Bier",en:"Beer",it:"Birra",sl:"Pivo"},
     items:[
       {name:"Heineken",p:"4,60"},
       {name:{de:"Bier 0,3 l",en:"Beer 0.3 l",it:"Birra 0,3 l",sl:"Pivo 0,3 l"},p:"4,70"},
@@ -263,7 +288,7 @@ const DRINKS = [
       {name:{de:"Weißbier",en:"Wheat Beer",it:"Birra di frumento",sl:"Pšenično pivo"},p:"5,20"},
       {name:{de:"Alkoholfreies Bier",en:"Non-alcoholic Beer",it:"Birra analcolica",sl:"Brezalkoholno pivo"},p:"5,20"}
     ]},
-  { title:{de:"Wein",en:"Wine",it:"Vino",sl:"Vino"}, gb:true,
+  { id:"wein", title:{de:"Wein",en:"Wine",it:"Vino",sl:"Vino"}, gb:true,
     items:[
       {name:{de:"Grüner Veltliner",en:"Grüner Veltliner",it:"Grüner Veltliner",sl:"Grüner Veltliner"},p:"4,20 / 24,60"},
       {name:"Muskateller",p:"4,80"},
@@ -277,7 +302,7 @@ const DRINKS = [
       {name:"Parallèle 45",p:"39,20",b:true},
       {name:"Rosé Spezial",p:"34,80",b:true}
     ]},
-  { title:{de:"Aperitif & Cocktails",en:"Aperitifs & Cocktails",it:"Aperitivi & Cocktail",sl:"Aperitivi & Koktajli"},
+  { id:"aperitif", title:{de:"Aperitif & Cocktails",en:"Aperitifs & Cocktails",it:"Aperitivi & Cocktail",sl:"Aperitivi & Koktajli"},
     items:[
       {name:"Prosecco",p:"5,10 / 23,50"},
       {name:"Aperol Spritz",p:"5,10"},
@@ -290,7 +315,7 @@ const DRINKS = [
       {name:"Gin Tonic",p:"8,90"},
       {name:"Mojito",p:"9,90"}
     ]},
-  { title:{de:"Spirituosen",en:"Spirits",it:"Distillati",sl:"Žgane pijače"},
+  { id:"spirituosen", title:{de:"Spirituosen",en:"Spirits",it:"Distillati",sl:"Žgane pijače"},
     items:[
       {name:"Jack Daniel's",p:"5,90"},
       {name:{de:"Shot",en:"Shot",it:"Shot",sl:"Šilce"},p:"5,80"},
@@ -313,8 +338,31 @@ function renderSections(list){
         <span class="price">€ ${it.p}${bt}</span>
       </div>`;
     }).join("");
-    return `<div class="section"><h3>${pick(sec.title)}</h3>${note}${rows}</div>`;
+    return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${note}${rows}</div>`;
   }).join("");
+}
+
+function renderCats(){
+  const all=[...FOOD,...DRINKS];
+  document.getElementById("cats").innerHTML = all.map(sec=>
+    `<a href="#sec-${sec.id}" data-target="sec-${sec.id}">${pick(sec.title)}</a>`).join("");
+}
+
+let spy;
+function setupScrollSpy(){
+  if(spy) spy.disconnect();
+  const links=[...document.querySelectorAll(".cats a")];
+  const byId=Object.fromEntries(links.map(a=>[a.dataset.target,a]));
+  spy=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove("active"));
+        const a=byId[e.target.id];
+        if(a){a.classList.add("active");a.scrollIntoView({inline:"center",block:"nearest"});}
+      }
+    });
+  },{rootMargin:"-125px 0px -70% 0px",threshold:0});
+  document.querySelectorAll(".section").forEach(s=>spy.observe(s));
 }
 
 function render(){
@@ -332,6 +380,9 @@ function render(){
   document.getElementById("menu").innerHTML =
     `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD)}` +
     `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(DRINKS)}`;
+
+  renderCats();
+  setupScrollSpy();
 
   document.querySelectorAll("#lang button").forEach(b=>
     b.classList.toggle("active", b.dataset.lang===lang));
