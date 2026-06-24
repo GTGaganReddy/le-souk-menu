@@ -32,6 +32,14 @@ Die **Tajine-Beschreibungen** habe ich passend zur jeweiligen Spezialität formu
 Bitte einmal gegen die echten Rezepte gegenlesen und ggf. anpassen.
 Die **Preise** stammen aus den Fotos der Kassa (POS) – bei Bedarf korrigieren.
 
+## „Meine Auswahl" (Das will ich essen)
+Gäste können mit dem **+** bei jedem Gericht/Getränk eine persönliche Liste anlegen.
+Unten rechts erscheint **Meine Auswahl** mit Zähler; ein Tipp zeigt die Liste mit
+**Moes Foto** – einfach Moe zeigen. Alles bleibt am Gerät (kein Versand, keine Anmeldung).
+
+**Moes Foto austauschen:** Datei `images/moe.jpg` durch ein neues, möglichst
+quadratisches Foto ersetzen (gleicher Name). Es wird automatisch rund dargestellt.
+
 ## Bilder
 Im Ordner `images/`: `logo.jpg`, `hero-tajine.jpg`, `hero-couscous.jpg`,
 `tajine-prunes.jpg`, `sign.jpg`. Zum Austauschen einfach gleichnamig ersetzen.

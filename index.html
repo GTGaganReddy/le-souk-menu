@@ -158,14 +158,58 @@
   .sheet .shstory{font-size:18px;color:var(--cream);opacity:.92;margin-top:14px;line-height:1.6}
   .sheet .shstory .lbl{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin:16px 0 4px}
   .sheet .shclose{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+  .sheet .shadd{display:inline-flex;align-items:center;gap:8px;margin-top:20px;
+    font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
+    background:var(--gold);color:var(--black);border:1px solid var(--gold);border-radius:999px;
+    padding:11px 22px;cursor:pointer;transition:.2s}
+  .sheet .shadd.on{background:transparent;color:var(--gold-bright)}
   body.locked{overflow:hidden}
+
+  /* ---- Add (+) button on each row ---- */
+  .item .add{flex:0 0 auto;width:26px;height:26px;border-radius:50%;cursor:pointer;
+    border:1px solid var(--line);background:transparent;color:var(--gold-bright);
+    font-size:18px;line-height:1;display:inline-flex;align-items:center;justify-content:center;
+    transition:.18s;transform:translateY(-2px)}
+  .item .add:hover{border-color:var(--gold)}
+  .item .add.on{background:var(--gold);color:var(--black);border-color:var(--gold)}
+
+  /* ---- Floating "my selection" button ---- */
+  .fab{position:fixed;right:16px;bottom:18px;z-index:30;
+    display:none;align-items:center;gap:9px;
+    background:var(--gold);color:var(--black);border:none;border-radius:999px;
+    padding:12px 18px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5);
+    font-family:'Cinzel',serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+  .fab.show{display:inline-flex;animation:fabin .3s ease}
+  @keyframes fabin{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .fab svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+  .fab .fab-count{background:var(--black);color:var(--gold-bright);border-radius:999px;
+    min-width:21px;height:21px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px}
+
+  /* ---- Wishlist panel ---- */
+  .wsheet .wbody{padding:6px 22px 32px}
+  .wsheet .moe{display:flex;align-items:center;gap:14px;margin:8px 0 6px}
+  .wsheet .moe img{width:66px;height:66px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 auto}
+  .wsheet .moe .moemsg{font-style:italic;font-size:17px;color:var(--cream);line-height:1.4}
+  .wsheet h4{font-family:'Cinzel',serif;color:var(--gold-bright);font-weight:500;font-size:18px;
+    letter-spacing:2px;text-transform:uppercase;margin:18px 0 6px}
+  .wrow{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px dotted rgba(201,162,75,.18)}
+  .wrow .wn{flex:1;font-size:19px;color:var(--cream)}
+  .wrow .wp{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-bright);white-space:nowrap}
+  .wrow .wx{background:none;border:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0 2px}
+  .wrow .wx:hover{color:var(--gold-bright)}
+  .wempty{font-style:italic;color:var(--muted);padding:20px 0;text-align:center}
+  .wclear{margin-top:20px;background:none;border:1px solid var(--line);color:var(--muted);
+    border-radius:999px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1.5px;
+    text-transform:uppercase;cursor:pointer}
+  .wclear:hover{color:var(--gold-bright);border-color:var(--gold)}
 
   /* ---- Storefront strip ---- */
   .sign{margin:46px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .sign img{width:100%;height:210px;object-fit:cover;opacity:.95}
 
   /* ---- Footer ---- */
-  footer{text-align:center;padding:44px 0 60px}
+  footer{text-align:center;padding:44px 0 96px}
   footer .fbrand{font-family:'Great Vibes',cursive;color:var(--gold-bright);font-size:46px}
   footer .info{font-size:18px;margin-top:8px;line-height:1.7}
   footer a{color:var(--gold-bright);text-decoration:none;border-bottom:1px solid var(--line)}
@@ -239,6 +283,27 @@
     <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
     <p class="shsub" id="shSub"></p>
     <div class="shstory" id="shStory"></div>
+    <button class="shadd" id="shAdd" type="button"></button>
+  </div>
+</aside>
+
+<!-- Floating "my selection" button -->
+<button class="fab" id="fab" type="button" aria-label="Meine Auswahl">
+  <svg viewBox="0 0 24 24"><path d="M5 3v8m0 0a2 2 0 002-2V3m-2 8v10M11 3c0 3 1 6 3 6v12"/></svg>
+  <span class="fab-text"></span>
+  <span class="fab-count" id="fabCount">0</span>
+</button>
+
+<!-- Wishlist panel -->
+<div class="overlay" id="wOverlay"></div>
+<aside class="sheet wsheet" id="wsheet" role="dialog" aria-modal="true" aria-label="Meine Auswahl">
+  <button class="shclose" id="wClose" aria-label="Schließen">&times;</button>
+  <div class="grip"></div>
+  <div class="wbody">
+    <div class="moe"><img src="images/moe.jpg" alt="Moe"><div class="moemsg" id="moeMsg"></div></div>
+    <h4 id="wTitle"></h4>
+    <div id="wList"></div>
+    <button class="wclear" id="wClear" type="button"></button>
   </div>
 </aside>
 
@@ -265,7 +330,14 @@ const T = {
   closed:{de:"Ruhetag",en:"Closed",it:"Chiuso",sl:"Zaprto"},
   glassBottle:{de:"Glas / Flasche",en:"Glass / Bottle",it:"Bicchiere / Bottiglia",sl:"Kozarec / Steklenica"},
   bottle:{de:"Fl.",en:"btl.",it:"btg.",sl:"stekl."},
-  copy:{de:"© Le Souk Klagenfurt · Alle Preise in Euro inkl. MwSt.",en:"© Le Souk Klagenfurt · All prices in Euro incl. VAT.",it:"© Le Souk Klagenfurt · Prezzi in Euro, IVA inclusa.",sl:"© Le Souk Klagenfurt · Vse cene v evrih z DDV."}
+  copy:{de:"© Le Souk Klagenfurt · Alle Preise in Euro inkl. MwSt.",en:"© Le Souk Klagenfurt · All prices in Euro incl. VAT.",it:"© Le Souk Klagenfurt · Prezzi in Euro, IVA inclusa.",sl:"© Le Souk Klagenfurt · Vse cene v evrih z DDV."},
+  fabLabel:{de:"Meine Auswahl",en:"My selection",it:"La mia scelta",sl:"Moja izbira"},
+  wishTitle:{de:"Das will ich essen",en:"What I'd like to eat",it:"Cosa vorrei mangiare",sl:"Kar bi rad jedel"},
+  moeMsg:{de:"Zeig Moe einfach deine Auswahl – er kümmert sich um den Rest!",en:"Just show Moe your selection – he'll take care of the rest!",it:"Mostra la tua scelta a Moe – al resto pensa lui!",sl:"Pokaži Moeju svojo izbiro – za ostalo poskrbi on!"},
+  addBtn:{de:"Zu meiner Auswahl",en:"Add to my list",it:"Aggiungi alla lista",sl:"Dodaj na seznam"},
+  addedBtn:{de:"✓ Hinzugefügt",en:"✓ Added",it:"✓ Aggiunto",sl:"✓ Dodano"},
+  wishEmpty:{de:"Noch nichts ausgewählt. Tippe bei einem Gericht oder Getränk auf das +.",en:"Nothing selected yet. Tap the + on a dish or drink.",it:"Niente ancora. Tocca il + su un piatto o una bevanda.",sl:"Še nič izbranega. Tapni + pri jedi ali pijači."},
+  wishClear:{de:"Liste leeren",en:"Clear list",it:"Svuota lista",sl:"Počisti seznam"}
 };
 
 const FOOD = [
@@ -422,6 +494,11 @@ let lang = "de";
 const pick = v => (typeof v === "string") ? v : (v[lang] || v.de);
 
 const REG = {};
+let wish = JSON.parse(localStorage.getItem("lesouk_wish")||"[]");
+const inWish = uid => wish.includes(uid);
+function saveWish(){localStorage.setItem("lesouk_wish",JSON.stringify(wish));}
+function toggleWish(uid){ const k=wish.indexOf(uid); if(k>=0)wish.splice(k,1); else wish.push(uid); saveWish(); updateWishUI(); }
+
 function renderSections(list, showDesc){
   return list.map(sec=>{
     const note = sec.gb ? `<div class="note">${pick(T.glassBottle)}</div>` : "";
@@ -430,12 +507,12 @@ function renderSections(list, showDesc){
       const tap = !!(it.desc || it.img || it.story);
       const bt = it.b ? ` <small>${pick(T.bottle)}</small>` : "";
       const desc = (showDesc && it.desc) ? `<span class="desc">${pick(it.desc)}</span>` : "";
-      const tag = tap ? "button" : "div";
-      const attr = tap ? ` type="button" data-uid="${uid}"` : "";
-      return `<${tag} class="item${tap?" tap":""}"${attr}>
-        <span class="row"><span class="name">${pick(it.name)}</span><span class="lead"></span><span class="price">€ ${it.p}${bt}</span></span>
+      const add = tap ? `<button class="add${inWish(uid)?" on":""}" type="button" data-add="${uid}" aria-label="merken">${inWish(uid)?"✓":"+"}</button>` : "";
+      const attr = tap ? ` data-uid="${uid}" role="button" tabindex="0"` : "";
+      return `<div class="item${tap?" tap":""}"${attr}>
+        <span class="row"><span class="name">${pick(it.name)}</span><span class="lead"></span><span class="price">€ ${it.p}${bt}</span>${add}</span>
         ${desc}
-      </${tag}>`;
+      </div>`;
     }).join("");
     return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${note}${rows}</div>`;
   }).join("");
@@ -476,7 +553,8 @@ function scrollToSec(id){
 /* ----- detail sheet ----- */
 const overlay=document.getElementById("overlay");
 const sheet=document.getElementById("sheet");
-function openSheet(it){
+function openSheet(uid){
+  const it=REG[uid]; if(!it) return;
   document.getElementById("shName").textContent=pick(it.name);
   document.getElementById("shPrice").textContent="€ "+it.p;
   const sub=document.getElementById("shSub");
@@ -488,18 +566,55 @@ function openSheet(it){
   const img=document.getElementById("shImg");
   if(it.img){img.className="shimg";img.style.backgroundImage="url('"+it.img+"')";img.innerHTML="";}
   else{img.className="shimg ph";img.style.backgroundImage="none";img.innerHTML='<img src="images/logo.jpg" alt="">';}
+  const sa=document.getElementById("shAdd"); sa.dataset.uid=uid;
+  const on=inWish(uid); sa.classList.toggle("on",on); sa.textContent=on?pick(T.addedBtn):pick(T.addBtn);
   sheet.scrollTop=0;
   overlay.classList.add("open");sheet.classList.add("open");document.body.classList.add("locked");
 }
 function closeSheet(){overlay.classList.remove("open");sheet.classList.remove("open");document.body.classList.remove("locked");}
 overlay.addEventListener("click",closeSheet);
 document.getElementById("shClose").addEventListener("click",closeSheet);
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
+document.getElementById("shAdd").addEventListener("click",()=>{const uid=document.getElementById("shAdd").dataset.uid; if(uid) toggleWish(uid);});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSheet();closeWish();}});
+
+/* ----- my-selection (wishlist) ----- */
+const wOverlay=document.getElementById("wOverlay");
+const wsheet=document.getElementById("wsheet");
+function updateWishUI(){
+  const n=wish.length, fab=document.getElementById("fab");
+  document.getElementById("fabCount").textContent=n;
+  document.querySelector("#fab .fab-text").textContent=pick(T.fabLabel);
+  fab.classList.toggle("show", n>0);
+  document.querySelectorAll(".item .add").forEach(b=>{const on=inWish(b.dataset.add);b.classList.toggle("on",on);b.textContent=on?"✓":"+";});
+  const sa=document.getElementById("shAdd");
+  if(sa.dataset.uid){const on=inWish(sa.dataset.uid);sa.classList.toggle("on",on);sa.textContent=on?pick(T.addedBtn):pick(T.addBtn);}
+  if(wsheet.classList.contains("open")) renderWishList();
+}
+function renderWishList(){
+  document.getElementById("wTitle").textContent=pick(T.wishTitle);
+  document.getElementById("moeMsg").textContent=pick(T.moeMsg);
+  const clear=document.getElementById("wClear"); clear.textContent=pick(T.wishClear);
+  const list=document.getElementById("wList");
+  if(!wish.length){list.innerHTML=`<div class="wempty">${pick(T.wishEmpty)}</div>`;clear.style.display="none";return;}
+  clear.style.display="";
+  list.innerHTML=wish.map(uid=>{const it=REG[uid];if(!it)return "";
+    return `<div class="wrow"><span class="wn">${pick(it.name)}</span><span class="wp">€ ${it.p}</span><button class="wx" type="button" data-del="${uid}" aria-label="entfernen">&times;</button></div>`;}).join("");
+}
+function openWish(){renderWishList();wsheet.scrollTop=0;wOverlay.classList.add("open");wsheet.classList.add("open");document.body.classList.add("locked");}
+function closeWish(){wOverlay.classList.remove("open");wsheet.classList.remove("open");document.body.classList.remove("locked");}
+document.getElementById("fab").addEventListener("click",openWish);
+wOverlay.addEventListener("click",closeWish);
+document.getElementById("wClose").addEventListener("click",closeWish);
+document.getElementById("wList").addEventListener("click",e=>{const x=e.target.closest(".wx");if(x)toggleWish(x.dataset.del);});
+document.getElementById("wClear").addEventListener("click",()=>{wish=[];saveWish();updateWishUI();});
 
 /* ----- one-time click wiring (containers persist across re-renders) ----- */
 document.getElementById("menu").addEventListener("click",e=>{
-  const row=e.target.closest(".item.tap"); if(!row) return;
-  const it=REG[row.dataset.uid]; if(it) openSheet(it);
+  const add=e.target.closest(".add"); if(add){toggleWish(add.dataset.add);return;}
+  const row=e.target.closest(".item.tap"); if(row) openSheet(row.dataset.uid);
+});
+document.getElementById("menu").addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key===" "){const row=e.target.closest(".item.tap");if(row){e.preventDefault();openSheet(row.dataset.uid);}}
 });
 document.getElementById("cats").addEventListener("click",e=>{
   const a=e.target.closest("a"); if(!a) return;
@@ -527,6 +642,7 @@ function render(){
 
   renderCats();
   setupScrollSpy();
+  updateWishUI();
 
   document.querySelectorAll("#lang button").forEach(b=>
     b.classList.toggle("active", b.dataset.lang===lang));
