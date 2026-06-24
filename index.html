@@ -162,12 +162,22 @@
   .sheet .shstory{font-size:18px;color:var(--cream);opacity:.92;margin-top:14px;line-height:1.6}
   .sheet .shstory .lbl{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin:16px 0 4px}
   .sheet .shclose{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
-  .sheet .shadd{display:inline-flex;align-items:center;gap:8px;margin-top:20px;
+  .shaction{margin-top:22px;display:flex;align-items:center;gap:16px}
+  .shaction .shadd{display:inline-flex;align-items:center;gap:8px;
     font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
     background:var(--gold);color:var(--black);border:1px solid var(--gold);border-radius:999px;
-    padding:11px 22px;cursor:pointer;transition:.2s}
-  .sheet .shadd.on{background:transparent;color:var(--gold-bright)}
+    padding:12px 24px;cursor:pointer;transition:.2s}
+  .shaction .shadd:hover{background:var(--gold-bright);border-color:var(--gold-bright)}
+  .shaction.stepper .wq{width:36px;height:36px;font-size:22px}
+  .shaction .shqty{font-family:'Cinzel',serif;font-size:22px;color:var(--gold-bright);min-width:22px;text-align:center}
   body.locked{overflow:hidden}
+
+  /* tap hint */
+  .taphint{display:none;align-items:center;gap:9px;justify-content:center;width:max-content;
+    margin:18px auto 0;padding:9px 18px;border:1px solid var(--line);border-radius:999px;
+    color:var(--gold-bright);font-style:italic;font-size:15.5px;background:rgba(201,162,75,.07)}
+  .taphint.show{display:flex;animation:fabin .5s ease}
+  .taphint svg{flex:0 0 auto}
 
   /* ---- Add (+) button on each row ---- */
   .item .add{flex:0 0 auto;width:26px;height:26px;border-radius:50%;cursor:pointer;
@@ -261,6 +271,10 @@
     <figure><a href="#sec-tajines"><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></a></figure>
     <figure><a href="#sec-couscous"><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></a></figure>
   </div>
+  <div class="taphint" id="tapHint">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11V6a2 2 0 114 0v5m0-3a2 2 0 114 0v3m0 0a2 2 0 114 0v3a7 7 0 01-7 7h-2a7 7 0 01-5-2l-3-3a2 2 0 113-3l2 2"/></svg>
+    <span id="tapHintText"></span>
+  </div>
 </div>
 
 <main class="wrap" id="menu"></main>
@@ -291,7 +305,7 @@
     <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
     <p class="shsub" id="shSub"></p>
     <div class="shstory" id="shStory"></div>
-    <button class="shadd" id="shAdd" type="button"></button>
+    <div class="shaction" id="shAction"></div>
   </div>
 </aside>
 
@@ -345,7 +359,8 @@ const T = {
   addBtn:{de:"Zu meiner Auswahl",en:"Add to my list",it:"Aggiungi alla lista",sl:"Dodaj na seznam"},
   addedBtn:{de:"✓ Hinzugefügt",en:"✓ Added",it:"✓ Aggiunto",sl:"✓ Dodano"},
   wishEmpty:{de:"Noch nichts ausgewählt. Tippe bei einem Gericht oder Getränk auf das +.",en:"Nothing selected yet. Tap the + on a dish or drink.",it:"Niente ancora. Tocca il + su un piatto o una bevanda.",sl:"Še nič izbranega. Tapni + pri jedi ali pijači."},
-  wishClear:{de:"Liste leeren",en:"Clear list",it:"Svuota lista",sl:"Počisti seznam"}
+  wishClear:{de:"Liste leeren",en:"Clear list",it:"Svuota lista",sl:"Počisti seznam"},
+  tapHint:{de:"Tippe auf ein Gericht für Foto, Details & zum Hinzufügen",en:"Tap a dish for photo, details & to add",it:"Tocca un piatto per foto, dettagli e per aggiungere",sl:"Tapni jed za fotografijo, podrobnosti in dodajanje"}
 };
 
 const FOOD = [
@@ -599,15 +614,31 @@ function openSheet(uid){
   const img=document.getElementById("shImg");
   if(it.img){img.className="shimg";img.style.backgroundImage="url('"+it.img+"')";img.innerHTML="";}
   else{img.className="shimg ph";img.style.backgroundImage="none";img.innerHTML='<img src="images/logo.jpg" alt="">';}
-  const sa=document.getElementById("shAdd"); sa.dataset.uid=uid;
-  const on=inWish(uid); sa.classList.toggle("on",on); sa.textContent=on?pick(T.addedBtn):pick(T.addBtn);
+  sheet.dataset.uid=uid; renderShAction(uid);
   sheet.scrollTop=0;
   overlay.classList.add("open");sheet.classList.add("open");document.body.classList.add("locked");
+  markHintSeen();
 }
+function renderShAction(uid){
+  const el=document.getElementById("shAction");
+  if(inWish(uid)){
+    el.className="shaction stepper";
+    el.innerHTML=`<button class="wq" type="button" data-shdec="1" aria-label="weniger">−</button><b class="shqty">${qty(uid)}</b><button class="wq" type="button" data-shinc="1" aria-label="mehr">+</button>`;
+  }else{
+    el.className="shaction";
+    el.innerHTML=`<button class="shadd" type="button" id="shAddBtn">${pick(T.addBtn)}</button>`;
+  }
+}
+function markHintSeen(){ localStorage.setItem("lesouk_hint","1"); const h=document.getElementById("tapHint"); if(h) h.classList.remove("show"); }
 function closeSheet(){overlay.classList.remove("open");sheet.classList.remove("open");document.body.classList.remove("locked");}
 overlay.addEventListener("click",closeSheet);
 document.getElementById("shClose").addEventListener("click",closeSheet);
-document.getElementById("shAdd").addEventListener("click",()=>{const uid=document.getElementById("shAdd").dataset.uid; if(uid) toggleWish(uid);});
+document.getElementById("shAction").addEventListener("click",e=>{
+  const uid=sheet.dataset.uid; if(!uid) return;
+  if(e.target.closest("#shAddBtn")){ setQty(uid,1); return; }
+  if(e.target.closest("[data-shinc]")){ addQty(uid,1); return; }
+  if(e.target.closest("[data-shdec]")){ addQty(uid,-1); return; }
+});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSheet();closeWish();}});
 
 /* ----- my-selection (wishlist) ----- */
@@ -619,8 +650,7 @@ function updateWishUI(){
   document.querySelector("#fab .fab-text").textContent=pick(T.fabLabel);
   fab.classList.toggle("show", n>0);
   document.querySelectorAll(".item .add").forEach(b=>{const on=inWish(b.dataset.add);b.classList.toggle("on",on);b.textContent=on?"✓":"+";});
-  const sa=document.getElementById("shAdd");
-  if(sa.dataset.uid){const on=inWish(sa.dataset.uid);sa.classList.toggle("on",on);sa.textContent=on?pick(T.addedBtn):pick(T.addBtn);}
+  if(sheet.classList.contains("open") && sheet.dataset.uid) renderShAction(sheet.dataset.uid);
   if(wsheet.classList.contains("open")) renderWishList();
 }
 function renderWishList(){
@@ -651,7 +681,7 @@ document.getElementById("wClear").addEventListener("click",()=>{wish=[];saveWish
 
 /* ----- one-time click wiring (containers persist across re-renders) ----- */
 document.getElementById("menu").addEventListener("click",e=>{
-  const add=e.target.closest(".add"); if(add){toggleWish(add.dataset.add);return;}
+  const add=e.target.closest(".add"); if(add){const u=add.dataset.add; if(!inWish(u)) setQty(u,1); openSheet(u); return;}
   const row=e.target.closest(".item.tap"); if(row) openSheet(row.dataset.uid);
 });
 document.getElementById("menu").addEventListener("keydown",e=>{
@@ -680,6 +710,9 @@ function render(){
   document.getElementById("menu").innerHTML =
     `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD,true)}` +
     `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(orderedDrinks(),false)}`;
+
+  document.getElementById("tapHintText").textContent = pick(T.tapHint);
+  document.getElementById("tapHint").classList.toggle("show", !localStorage.getItem("lesouk_hint"));
 
   renderCats();
   setupScrollSpy();
