@@ -537,7 +537,8 @@ document.getElementById("lang").addEventListener("click",e=>{
   lang=b.dataset.lang; localStorage.setItem("lesouk_lang",lang); render();
 });
 
-lang = localStorage.getItem("lesouk_lang") || (navigator.language||"de").slice(0,2);
+// Austria → German first by default. A returning visitor's manual choice is kept.
+lang = localStorage.getItem("lesouk_lang") || "de";
 if(!["de","en","it","sl"].includes(lang)) lang="de";
 render();
 </script>
