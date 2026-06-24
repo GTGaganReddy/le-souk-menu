@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Souk · Marokkanische Küche · Klagenfurt</title>
+<meta name="description" content="Le Souk – Café & Bistro für authentische marokkanische Küche in Klagenfurt. Tajines, Couscous & orientalische Spezialitäten.">
+<link rel="icon" type="image/jpeg" href="images/logo.jpg">
+
+<!-- Open Graph (nice link preview when shared) -->
+<meta property="og:title" content="Le Souk · Marokkanische Küche">
+<meta property="og:description" content="Ihr Garant für authentische marokkanische Küche – Klagenfurt.">
+<meta property="og:image" content="images/hero-tajine.jpg">
+<meta property="og:type" content="restaurant">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --black:#0b0b0c;
+    --panel:#111114;
+    --gold:#c9a24b;
+    --gold-bright:#e3c275;
+    --cream:#e9e3d6;
+    --muted:#a89c84;
+    --line:rgba(201,162,75,.28);
+    --maxw:760px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--black);
+    color:var(--cream);
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:19px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 50% -10%, rgba(201,162,75,.10), transparent 55%);
+  }
+  img{display:block;max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+
+  /* ---- Language switch ---- */
+  .lang{
+    position:sticky;top:0;z-index:20;
+    background:rgba(11,11,12,.82);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    display:flex;justify-content:center;gap:6px;
+    padding:9px 10px;
+  }
+  .lang button{
+    font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;
+    background:transparent;color:var(--muted);border:1px solid transparent;
+    border-radius:999px;padding:5px 12px;cursor:pointer;transition:.2s;
+  }
+  .lang button:hover{color:var(--gold-bright)}
+  .lang button.active{color:var(--black);background:var(--gold);border-color:var(--gold)}
+
+  /* ---- Header ---- */
+  header{text-align:center;padding:40px 0 14px}
+  header .logo{width:150px;margin:0 auto 6px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+  .brand{font-family:'Great Vibes',cursive;color:var(--gold-bright);
+    font-size:74px;line-height:1;margin:4px 0 2px}
+  .sub{font-family:'Cinzel',serif;letter-spacing:5px;text-transform:uppercase;
+    font-size:12.5px;color:var(--muted)}
+  .tagline{font-style:italic;color:var(--cream);max-width:480px;margin:22px auto 4px;
+    font-size:20px;opacity:.92}
+
+  /* ---- Hero photos ---- */
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0 8px}
+  .hero figure{position:relative;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .hero img{width:100%;height:230px;object-fit:cover;transition:transform .6s ease}
+  .hero figure:hover img{transform:scale(1.05)}
+  .hero figcaption{
+    position:absolute;left:0;right:0;bottom:0;
+    background:linear-gradient(transparent,rgba(0,0,0,.85));
+    color:var(--gold-bright);font-family:'Cinzel',serif;letter-spacing:1.5px;
+    font-size:11px;text-transform:uppercase;text-align:center;padding:22px 6px 8px}
+
+  /* ---- Section ---- */
+  .group-title{
+    text-align:center;font-family:'Cinzel',serif;color:var(--gold);
+    letter-spacing:8px;text-transform:uppercase;font-size:15px;
+    margin:54px 0 6px;
+  }
+  .group-title::after{content:"";display:block;width:54px;height:1px;background:var(--gold);
+    margin:12px auto 0;opacity:.6}
+
+  .section{margin-top:30px}
+  .section h3{
+    font-family:'Cinzel',serif;color:var(--gold-bright);font-weight:500;
+    letter-spacing:3px;text-transform:uppercase;font-size:14px;
+    display:flex;align-items:center;gap:14px;margin-bottom:4px;
+  }
+  .section h3::after{content:"";flex:1;height:1px;background:var(--line)}
+  .section .note{font-style:italic;color:var(--muted);font-size:14px;margin-bottom:12px}
+
+  .item{display:flex;align-items:baseline;gap:8px;padding:9px 0;border-bottom:1px dotted rgba(201,162,75,.18)}
+  .item:last-child{border-bottom:none}
+  .item .name{font-weight:600;font-size:20px;color:var(--cream);white-space:nowrap}
+  .item .desc{display:block;font-style:italic;font-weight:400;font-size:16px;color:var(--muted);white-space:normal;margin-top:1px}
+  .item .lead{flex:1;border-bottom:1px dotted rgba(201,162,75,.35);transform:translateY(-4px);min-width:14px}
+  .item .price{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-bright);white-space:nowrap;letter-spacing:.5px}
+  .item .price small{color:var(--muted);font-size:12px}
+  .left{flex:1}
+
+  /* ---- Storefront strip ---- */
+  .sign{margin:46px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .sign img{width:100%;height:170px;object-fit:cover;opacity:.92}
+
+  /* ---- Footer ---- */
+  footer{text-align:center;padding:44px 0 60px}
+  footer .fbrand{font-family:'Great Vibes',cursive;color:var(--gold-bright);font-size:46px}
+  footer .info{font-size:18px;margin-top:8px;line-height:1.7}
+  footer a{color:var(--gold-bright);text-decoration:none;border-bottom:1px solid var(--line)}
+  .hours{margin:20px auto 0;display:inline-block;text-align:left;
+    border:1px solid var(--line);border-radius:6px;padding:14px 26px}
+  .hours .ht{font-family:'Cinzel',serif;letter-spacing:3px;font-size:12px;color:var(--gold);
+    text-transform:uppercase;text-align:center;margin-bottom:8px}
+  .hours .row{display:flex;justify-content:space-between;gap:30px;font-size:17px}
+  .copyright{margin-top:30px;font-size:13px;color:var(--muted);font-style:italic}
+
+  @media (max-width:560px){
+    .brand{font-size:58px}
+    header{padding:30px 0 8px}
+    .hero img{height:165px}
+    .item .name{font-size:18.5px}
+    body{font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="lang" id="lang" aria-label="Sprache wählen">
+  <button data-lang="de">DE</button>
+  <button data-lang="en">EN</button>
+  <button data-lang="it">IT</button>
+  <button data-lang="sl">SL</button>
+</nav>
+
+<header class="wrap">
+  <img class="logo" src="images/logo.jpg" alt="Le Souk Logo">
+  <div class="brand">Le Souk</div>
+  <div class="sub" id="sub">Marokkanische Küche · Café · Bistro</div>
+  <p class="tagline" id="tagline"></p>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <figure><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></figure>
+    <figure><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></figure>
+  </div>
+</div>
+
+<main class="wrap" id="menu"></main>
+
+<div class="sign"><img src="images/sign.jpg" alt="Le Souk – Universitätsstraße 25, Klagenfurt"></div>
+
+<footer class="wrap">
+  <div class="fbrand">Le Souk</div>
+  <div class="info">
+    Universitätsstraße 25 · 9020 Klagenfurt<br>
+    <a href="tel:+436769378098">+43 676 937 8098</a> ·
+    <a href="https://instagram.com/Lesouk_klagenfurt" target="_blank" rel="noopener">@Lesouk_klagenfurt</a>
+  </div>
+  <div class="hours">
+    <div class="ht" id="hoursTitle">Öffnungszeiten</div>
+    <div class="row"><span id="d1">Di – Sa</span><span>17:00 – 00:00</span></div>
+    <div class="row"><span id="d2">So &amp; Mo</span><span id="closed">Ruhetag</span></div>
+  </div>
+  <div class="copyright" id="copy"></div>
+</footer>
+
+<script>
+/* ============ MENU DATA ============
+   Prices read from the Le Souk POS terminal.
+   To edit: change the price/name here. A string name is shown in every
+   language; an object {de,en,it,sl} is translated per language.       */
+
+const T = {
+  sub:{de:"Marokkanische Küche · Café · Bistro",en:"Moroccan Cuisine · Café · Bistro",it:"Cucina Marocchina · Café · Bistro",sl:"Maroška kuhinja · Café · Bistro"},
+  tagline:{
+    de:"Ihr Garant für authentische marokkanische Küche. Höchste Qualität der Zutaten ist für uns selbstverständlich.",
+    en:"Your guarantee for authentic Moroccan cuisine. The finest quality of ingredients is a matter of course for us.",
+    it:"La vostra garanzia di autentica cucina marocchina. La massima qualità degli ingredienti è per noi un dovere.",
+    sl:"Vaše zagotovilo za pristno maroško kuhinjo. Najvišja kakovost sestavin je za nas samoumevna."},
+  cap1:{de:"Tajine",en:"Tagine",it:"Tajine",sl:"Tažin"},
+  cap2:{de:"Couscous",en:"Couscous",it:"Couscous",sl:"Kuskus"},
+  foodGroup:{de:"Speisen",en:"Food",it:"Cucina",sl:"Jedi"},
+  drinkGroup:{de:"Getränke",en:"Drinks",it:"Bevande",sl:"Pijače"},
+  hoursTitle:{de:"Öffnungszeiten",en:"Opening Hours",it:"Orari di apertura",sl:"Odpiralni čas"},
+  d1:{de:"Di – Sa",en:"Tue – Sat",it:"Mar – Sab",sl:"Tor – Sob"},
+  d2:{de:"So & Mo",en:"Sun & Mon",it:"Dom & Lun",sl:"Ned & Pon"},
+  closed:{de:"Ruhetag",en:"Closed",it:"Chiuso",sl:"Zaprto"},
+  glassBottle:{de:"Glas / Flasche",en:"Glass / Bottle",it:"Bicchiere / Bottiglia",sl:"Kozarec / Steklenica"},
+  bottle:{de:"Fl.",en:"btl.",it:"btg.",sl:"stekl."},
+  copy:{de:"© Le Souk Klagenfurt · Alle Preise in Euro inkl. MwSt.",en:"© Le Souk Klagenfurt · All prices in Euro incl. VAT.",it:"© Le Souk Klagenfurt · Prezzi in Euro, IVA inclusa.",sl:"© Le Souk Klagenfurt · Vse cene v evrih z DDV."}
+};
+
+const FOOD = [
+  { title:{de:"Tajines",en:"Tagines",it:"Tajine",sl:"Tažini"},
+    items:[
+      {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},
+       desc:{de:"Saisonales Gemüse, Kichererbsen, Oliven & orientalische Gewürze.",en:"Seasonal vegetables, chickpeas, olives & oriental spices.",it:"Verdure di stagione, ceci, olive e spezie orientali.",sl:"Sezonska zelenjava, čičerika, olive in orientalske začimbe."},p:"13,90"},
+      {name:{de:"Mediterrane Linsen-Tajine",en:"Mediterranean Lentil Tagine",it:"Tajine di Lenticchie",sl:"Sredozemski Tažin z lečo"},
+       desc:{de:"Rote Linsen, mediterranes Gemüse, Kreuzkümmel & Koriander.",en:"Red lentils, Mediterranean vegetables, cumin & coriander.",it:"Lenticchie rosse, verdure mediterranee, cumino e coriandolo.",sl:"Rdeča leča, sredozemska zelenjava, kumina in koriander."},p:"16,80"},
+      {name:"Tajine Fès",
+       desc:{de:"Zartes Hähnchen, eingelegte Zitrone, grüne Oliven & Safran.",en:"Tender chicken, preserved lemon, green olives & saffron.",it:"Pollo tenero, limone in salamoia, olive verdi e zafferano.",sl:"Mehki piščanec, vložena limona, zelene olive in žafran."},p:"21,90"},
+      {name:"Tajine Klagenfurt",
+       desc:{de:"Rindfleisch nach Le-Souk-Art, regionales Gemüse & milde Gewürze.",en:"Beef Le Souk style, regional vegetables & mild spices.",it:"Manzo stile Le Souk, verdure regionali e spezie delicate.",sl:"Govedina po Le Souk, lokalna zelenjava in blage začimbe."},p:"23,90"},
+      {name:"Tajine Marrakesch",
+       desc:{de:"Lammfleisch, Aprikosen, Mandeln & Honig-Gewürzsauce.",en:"Lamb, apricots, almonds & honey-spiced sauce.",it:"Agnello, albicocche, mandorle e salsa al miele speziata.",sl:"Jagnjetina, marelice, mandlji in medeno-začimbna omaka."},p:"28,90"},
+      {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},
+       desc:{de:"Fisch & Meeresfrüchte in Chermoula mit Tomaten & Paprika.",en:"Fish & seafood in chermoula with tomatoes & peppers.",it:"Pesce e frutti di mare in chermoula con pomodori e peperoni.",sl:"Ribe in morski sadeži v chermouli s paradižnikom in papriko."},p:"33,90"}
+    ]},
+  { title:"Couscous",
+    items:[
+      {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},
+       desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},p:"23,90"},
+      {name:"Couscous Royal",
+       desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},p:"34,60"}
+    ]},
+  { title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
+    items:[
+      {name:"Le Souk Variation",
+       desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},p:"26,90"},
+      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},
+       desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},p:"12,50"}
+    ]},
+  { title:{de:"Dessert",en:"Desserts",it:"Dolci",sl:"Sladice"},
+    items:[
+      {name:{de:"Souk-Dessert",en:"Souk Dessert",it:"Dolce Souk",sl:"Souk Sladica"},
+       desc:{de:"Hausgemachte marokkanische Süßspeise des Tages.",en:"Homemade Moroccan sweet of the day.",it:"Dolce marocchino del giorno fatto in casa.",sl:"Domača maroška sladica dneva."},p:"7,20"},
+      {name:{de:"Orientalisches Gebäck",en:"Oriental Pastry",it:"Pasticceria Orientale",sl:"Orientalsko pecivo"},
+       desc:{de:"Feines Gebäck zum Tee.",en:"Fine pastries to enjoy with tea.",it:"Pasticcini fini da gustare con il tè.",sl:"Fino pecivo k čaju."},p:"2,50"}
+    ]}
+];
+
+const DRINKS = [
+  { title:{de:"Kaffee & Tee",en:"Coffee & Tea",it:"Caffè & Tè",sl:"Kava & Čaj"},
+    items:[
+      {name:"Espresso",p:"3,10"},
+      {name:{de:"Verlängerter",en:"Lungo (Verlängerter)",it:"Caffè Lungo",sl:"Podaljšana kava"},p:"3,90"},
+      {name:"Cappuccino",p:"4,10"},
+      {name:{de:"Souk Kaffee",en:"Souk Coffee",it:"Caffè Souk",sl:"Souk kava"},p:"5,10"},
+      {name:{de:"Le Souk Tee (Minze)",en:"Le Souk Tea (Mint)",it:"Tè Le Souk (Menta)",sl:"Le Souk čaj (meta)"},p:"5,20"}
+    ]},
+  { title:{de:"Alkoholfreie Getränke",en:"Soft Drinks",it:"Analcolici",sl:"Brezalkoholne pijače"},
+    items:[
+      {name:"Cola / Fanta",p:"4,80"},
+      {name:{de:"Pago Fruchtsaft",en:"Pago Juice",it:"Succo Pago",sl:"Sok Pago"},p:"4,80"},
+      {name:{de:"Minz-Zitrone",en:"Mint-Lemon",it:"Menta e Limone",sl:"Meta-limona"},p:"4,80"},
+      {name:{de:"Soda Zitrone",en:"Soda Lemon",it:"Soda Limone",sl:"Soda limona"},p:"3,10 / 4,20"},
+      {name:{de:"Mineralwasser",en:"Mineral Water",it:"Acqua minerale",sl:"Mineralna voda"},p:"4,30"}
+    ]},
+  { title:{de:"Bier",en:"Beer",it:"Birra",sl:"Pivo"},
+    items:[
+      {name:"Heineken",p:"4,60"},
+      {name:{de:"Bier 0,3 l",en:"Beer 0.3 l",it:"Birra 0,3 l",sl:"Pivo 0,3 l"},p:"4,70"},
+      {name:{de:"Bier 0,5 l",en:"Beer 0.5 l",it:"Birra 0,5 l",sl:"Pivo 0,5 l"},p:"5,20"},
+      {name:{de:"Weißbier",en:"Wheat Beer",it:"Birra di frumento",sl:"Pšenično pivo"},p:"5,20"},
+      {name:{de:"Alkoholfreies Bier",en:"Non-alcoholic Beer",it:"Birra analcolica",sl:"Brezalkoholno pivo"},p:"5,20"}
+    ]},
+  { title:{de:"Wein",en:"Wine",it:"Vino",sl:"Vino"}, gb:true,
+    items:[
+      {name:{de:"Grüner Veltliner",en:"Grüner Veltliner",it:"Grüner Veltliner",sl:"Grüner Veltliner"},p:"4,20 / 24,60"},
+      {name:"Muskateller",p:"4,80"},
+      {name:"Sauvignon Blanc",p:"5,80"},
+      {name:"Rosé",p:"5,80 / 33,80"},
+      {name:"Cabernet Sauvignon",p:"4,40 / 23,50"},
+      {name:{de:"Cuvée Rot",en:"Cuvée Red",it:"Cuvée Rosso",sl:"Cuvée rdeče"},p:"5,60 / 33,80"},
+      {name:"Syrah",p:"5,60"},
+      {name:"Beaujolais",p:"5,60"},
+      {name:"Cuvée 2021",p:"34,60",b:true},
+      {name:"Parallèle 45",p:"39,20",b:true},
+      {name:"Rosé Spezial",p:"34,80",b:true}
+    ]},
+  { title:{de:"Aperitif & Cocktails",en:"Aperitifs & Cocktails",it:"Aperitivi & Cocktail",sl:"Aperitivi & Koktajli"},
+    items:[
+      {name:"Prosecco",p:"5,10 / 23,50"},
+      {name:"Aperol Spritz",p:"5,10"},
+      {name:"Aperol Royal",p:"6,80"},
+      {name:"Aperol Prosecco",p:"6,20"},
+      {name:{de:"Spritzer",en:"Wine Spritzer",it:"Spritzer di vino",sl:"Špricer"},p:"4,30"},
+      {name:"Campari Soda",p:"4,80"},
+      {name:"Averna",p:"4,80"},
+      {name:{de:"Averna Sauer",en:"Averna Sour",it:"Averna Sour",sl:"Averna Sour"},p:"6,90"},
+      {name:"Gin Tonic",p:"8,90"},
+      {name:"Mojito",p:"9,90"}
+    ]},
+  { title:{de:"Spirituosen",en:"Spirits",it:"Distillati",sl:"Žgane pijače"},
+    items:[
+      {name:"Jack Daniel's",p:"5,90"},
+      {name:{de:"Shot",en:"Shot",it:"Shot",sl:"Šilce"},p:"5,80"},
+      {name:{de:"Spirituosen (diverse)",en:"Spirits (various)",it:"Distillati (vari)",sl:"Žgane pijače (razno)"},p:"ab 3,90"}
+    ]}
+];
+
+let lang = "de";
+const pick = v => (typeof v === "string") ? v : (v[lang] || v.de);
+
+function renderSections(list){
+  return list.map(sec=>{
+    const note = sec.gb ? `<div class="note">${pick(T.glassBottle)}</div>` : "";
+    const rows = sec.items.map(it=>{
+      const desc = it.desc ? `<span class="desc">${pick(it.desc)}</span>` : "";
+      const bt = it.b ? ` <small>${pick(T.bottle)}</small>` : "";
+      return `<div class="item">
+        <span class="left"><span class="name">${pick(it.name)}</span>${desc}</span>
+        <span class="lead"></span>
+        <span class="price">€ ${it.p}${bt}</span>
+      </div>`;
+    }).join("");
+    return `<div class="section"><h3>${pick(sec.title)}</h3>${note}${rows}</div>`;
+  }).join("");
+}
+
+function render(){
+  document.documentElement.lang = lang;
+  document.getElementById("sub").textContent = pick(T.sub);
+  document.getElementById("tagline").textContent = pick(T.tagline);
+  document.getElementById("cap1").textContent = pick(T.cap1);
+  document.getElementById("cap2").textContent = pick(T.cap2);
+  document.getElementById("hoursTitle").textContent = pick(T.hoursTitle);
+  document.getElementById("d1").textContent = pick(T.d1);
+  document.getElementById("d2").textContent = pick(T.d2);
+  document.getElementById("closed").textContent = pick(T.closed);
+  document.getElementById("copy").textContent = pick(T.copy);
+
+  document.getElementById("menu").innerHTML =
+    `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD)}` +
+    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(DRINKS)}`;
+
+  document.querySelectorAll("#lang button").forEach(b=>
+    b.classList.toggle("active", b.dataset.lang===lang));
+}
+
+document.getElementById("lang").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  lang=b.dataset.lang; localStorage.setItem("lesouk_lang",lang); render();
+});
+
+lang = localStorage.getItem("lesouk_lang") || (navigator.language||"de").slice(0,2);
+if(!["de","en","it","sl"].includes(lang)) lang="de";
+render();
+</script>
+</body>
+</html>
