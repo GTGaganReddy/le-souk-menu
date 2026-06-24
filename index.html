@@ -126,8 +126,7 @@
   .item.tap{cursor:pointer;transition:background .2s}
   .item.tap:hover,.item.tap:active{background:rgba(201,162,75,.08)}
   .item .name{font-weight:600;font-size:20px;color:var(--cream)}
-  .item .info{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);opacity:.7;margin-left:7px;border:1px solid var(--line);border-radius:50%;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
-  .item .desc{display:block;font-style:italic;font-weight:400;font-size:16px;color:var(--muted);white-space:normal;margin-top:1px}
+  .item .desc{display:block;font-style:italic;font-weight:400;font-size:16px;color:var(--muted);white-space:normal;margin-top:2px;padding-right:10px}
   .item .lead{flex:1;border-bottom:1px dotted rgba(201,162,75,.35);transform:translateY(-4px);min-width:14px}
   .item .price{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-bright);white-space:nowrap;letter-spacing:.5px}
   .item .price small{color:var(--muted);font-size:12px}
@@ -145,20 +144,22 @@
     max-height:82vh;overflow-y:auto}
   .sheet.open{transform:translateY(0)}
   .sheet .grip{width:42px;height:4px;border-radius:99px;background:var(--line);margin:10px auto 0}
-  .sheet .shimg{height:240px;background-size:cover;background-position:center;margin:14px 16px 0;border-radius:12px;border:1px solid var(--line)}
+  .sheet .shimg{height:200px;background-size:cover;background-position:center;margin:14px 16px 0;border-radius:12px;border:1px solid var(--line)}
   .sheet .shimg.ph{display:flex;align-items:center;justify-content:center;background:#0d0d10}
   .sheet .shimg.ph img{width:120px;opacity:.85}
   .sheet .shbody{padding:18px 22px 30px}
   .sheet .shhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
   .sheet h4{font-family:'Cinzel',serif;color:var(--gold-bright);font-weight:500;font-size:21px;letter-spacing:1px}
   .sheet .shprice{font-family:'Cinzel',serif;color:var(--gold-bright);font-size:18px;white-space:nowrap}
-  .sheet .shdesc{font-size:19px;font-style:italic;color:var(--cream);margin-top:12px;line-height:1.55}
+  .sheet .shsub{font-size:19px;font-style:italic;color:var(--gold-bright);margin-top:10px;line-height:1.5}
+  .sheet .shstory{font-size:18px;color:var(--cream);opacity:.92;margin-top:14px;line-height:1.6}
+  .sheet .shstory .lbl{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin:16px 0 4px}
   .sheet .shclose{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
   body.locked{overflow:hidden}
 
   /* ---- Storefront strip ---- */
   .sign{margin:46px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .sign img{width:100%;height:170px;object-fit:cover;opacity:.92}
+  .sign img{width:100%;height:210px;object-fit:cover;opacity:.95}
 
   /* ---- Footer ---- */
   footer{text-align:center;padding:44px 0 60px}
@@ -209,7 +210,7 @@
 
 <main class="wrap" id="menu"></main>
 
-<div class="sign"><img src="images/sign.jpg" alt="Le Souk – Universitätsstraße 25, Klagenfurt"></div>
+<div class="sign"><img src="images/banner.jpg" alt="Marokkanische Spezialitäten im Le Souk"></div>
 
 <footer class="wrap">
   <div class="fbrand">Le Souk</div>
@@ -233,7 +234,8 @@
   <div class="shimg" id="shImg"></div>
   <div class="shbody">
     <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
-    <p class="shdesc" id="shDesc"></p>
+    <p class="shsub" id="shSub"></p>
+    <div class="shstory" id="shStory"></div>
   </div>
 </aside>
 
@@ -266,39 +268,51 @@ const T = {
 const FOOD = [
   { id:"tajines", title:{de:"Tajines",en:"Tagines",it:"Tajine",sl:"Tažini"},
     items:[
-      {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},
-       desc:{de:"Saisonales Gemüse, Kichererbsen, Oliven & orientalische Gewürze.",en:"Seasonal vegetables, chickpeas, olives & oriental spices.",it:"Verdure di stagione, ceci, olive e spezie orientali.",sl:"Sezonska zelenjava, čičerika, olive in orientalske začimbe."},p:"13,90"},
-      {name:{de:"Mediterrane Linsen-Tajine",en:"Mediterranean Lentil Tagine",it:"Tajine di Lenticchie",sl:"Sredozemski Tažin z lečo"},
-       desc:{de:"Rote Linsen, mediterranes Gemüse, Kreuzkümmel & Koriander.",en:"Red lentils, Mediterranean vegetables, cumin & coriander.",it:"Lenticchie rosse, verdure mediterranee, cumino e coriandolo.",sl:"Rdeča leča, sredozemska zelenjava, kumina in koriander."},p:"16,80"},
-      {name:"Tajine Fès",
-       desc:{de:"Zartes Hähnchen, eingelegte Zitrone, grüne Oliven & Safran.",en:"Tender chicken, preserved lemon, green olives & saffron.",it:"Pollo tenero, limone in salamoia, olive verdi e zafferano.",sl:"Mehki piščanec, vložena limona, zelene olive in žafran."},p:"21,90"},
-      {name:"Tajine Klagenfurt",
-       desc:{de:"Rindfleisch nach Le-Souk-Art, regionales Gemüse & milde Gewürze.",en:"Beef Le Souk style, regional vegetables & mild spices.",it:"Manzo stile Le Souk, verdure regionali e spezie delicate.",sl:"Govedina po Le Souk, lokalna zelenjava in blage začimbe."},p:"23,90"},
+      {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},img:"images/tajine-vegan.jpg",
+       desc:{de:"Saisonales Gemüse, Kichererbsen, Oliven & orientalische Gewürze.",en:"Seasonal vegetables, chickpeas, olives & oriental spices.",it:"Verdure di stagione, ceci, olive e spezie orientali.",sl:"Sezonska zelenjava, čičerika, olive in orientalske začimbe."},
+       story:{de:"Das Gemüse gart langsam und schonend im geschlossenen Tonkegel und behält so seinen vollen Geschmack. Die Tajine ist nach genau diesem Lehmtopf benannt, in dem sie seit Jahrhunderten zubereitet wird.",en:"The vegetables cook slowly and gently inside the sealed clay cone, keeping all their flavour. The dish is named after the very pot it is cooked in – a tradition centuries old.",it:"Le verdure cuociono lentamente nel cono di argilla chiuso, conservando tutto il loro sapore. La tajine prende il nome proprio dalla pentola in cui viene cucinata da secoli.",sl:"Zelenjava se počasi in nežno kuha v zaprtem glinenem stožcu in ohrani ves okus. Jed je poimenovana po prav tej lončeni posodi, v kateri jo pripravljajo že stoletja."},p:"13,90"},
+      {name:{de:"Mediterrane Linsen-Tajine",en:"Mediterranean Lentil Tagine",it:"Tajine di Lenticchie",sl:"Sredozemski Tažin z lečo"},img:"images/tajine-linsen.jpg",
+       desc:{de:"Rote Linsen, mediterranes Gemüse, Kreuzkümmel & Koriander.",en:"Red lentils, Mediterranean vegetables, cumin & coriander.",it:"Lenticchie rosse, verdure mediterranee, cumino e coriandolo.",sl:"Rdeča leča, sredozemska zelenjava, kumina in koriander."},
+       story:{de:"Rote Linsen werden mit Kreuzkümmel und Koriander sanft eingekocht, bis sie cremig sind. In Marokko gelten Linsen als nahrhaftes Alltagsgericht voller Wärme und Würze.",en:"Red lentils are simmered gently with cumin and coriander until creamy. In Morocco, lentils are a nourishing everyday dish full of warmth and spice.",it:"Le lenticchie rosse vengono cotte dolcemente con cumino e coriandolo fino a diventare cremose. In Marocco le lenticchie sono un piatto quotidiano nutriente, pieno di calore e spezie.",sl:"Rdečo lečo nežno kuhamo s kumino in koriandrom, dokler ne postane kremasta. V Maroku je leča hranljiva vsakdanja jed, polna topline in začimb."},p:"16,80"},
+      {name:"Tajine Fès",img:"images/tajine-fes.jpg",
+       desc:{de:"Zartes Hähnchen, eingelegte Zitrone, grüne Oliven & Safran.",en:"Tender chicken, preserved lemon, green olives & saffron.",it:"Pollo tenero, limone in salamoia, olive verdi e zafferano.",sl:"Mehki piščanec, vložena limona, zelene olive in žafran."},
+       story:{de:"Hähnchen schmort mit eingelegter Salzzitrone und grünen Oliven, bis es zart vom Knochen fällt. Diese Kombination stammt aus der Königsstadt Fès, dem kulinarischen Herzen Marokkos.",en:"Chicken is braised with salt-preserved lemon and green olives until it falls off the bone. This pairing hails from the royal city of Fès, Morocco’s culinary heart.",it:"Il pollo cuoce con limone sotto sale e olive verdi finché non si stacca dall’osso. Questo abbinamento nasce nella città reale di Fès, cuore culinario del Marocco.",sl:"Piščanec se duši z vloženo soljeno limono in zelenimi olivami, dokler se ne loči od kosti. Ta kombinacija izvira iz kraljevega mesta Fès, kulinaričnega srca Maroka."},p:"21,90"},
+      {name:"Tajine Klagenfurt",img:"images/tajine-klagenfurt.jpg",
+       desc:{de:"Rindfleisch nach Le-Souk-Art, regionales Gemüse & milde Gewürze.",en:"Beef Le Souk style, regional vegetables & mild spices.",it:"Manzo stile Le Souk, verdure regionali e spezie delicate.",sl:"Govedina po Le Souk, lokalna zelenjava in blage začimbe."},
+       story:{de:"Unsere Hommage an die Heimat: zartes Rindfleisch mit regionalem Gemüse, langsam in milden Gewürzen geschmort. Eine Brücke zwischen marokkanischer Tradition und Kärntner Produkten.",en:"Our tribute to our home town: tender beef with regional vegetables, slow-braised in mild spices. A bridge between Moroccan tradition and Carinthian produce.",it:"Il nostro omaggio alla città: manzo tenero con verdure regionali, brasato lentamente con spezie delicate. Un ponte tra la tradizione marocchina e i prodotti della Carinzia.",sl:"Naš poklon domačemu mestu: mehka govedina z lokalno zelenjavo, počasi dušena v blagih začimbah. Most med maroško tradicijo in koroškimi pridelki."},p:"23,90"},
       {name:"Tajine Marrakesch",img:"images/hero-tajine.jpg",
-       desc:{de:"Lammfleisch, Aprikosen, Mandeln & Honig-Gewürzsauce.",en:"Lamb, apricots, almonds & honey-spiced sauce.",it:"Agnello, albicocche, mandorle e salsa al miele speziata.",sl:"Jagnjetina, marelice, mandlji in medeno-začimbna omaka."},p:"28,90"},
-      {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},
-       desc:{de:"Fisch & Meeresfrüchte in Chermoula mit Tomaten & Paprika.",en:"Fish & seafood in chermoula with tomatoes & peppers.",it:"Pesce e frutti di mare in chermoula con pomodori e peperoni.",sl:"Ribe in morski sadeži v chermouli s paradižnikom in papriko."},p:"33,90"}
+       desc:{de:"Lammfleisch, Aprikosen, Mandeln & Honig-Gewürzsauce.",en:"Lamb, apricots, almonds & honey-spiced sauce.",it:"Agnello, albicocche, mandorle e salsa al miele speziata.",sl:"Jagnjetina, marelice, mandlji in medeno-začimbna omaka."},
+       story:{de:"Lamm karamellisiert langsam mit Aprikosen, Honig und gerösteten Mandeln zu einer süß-würzigen Sauce. Dieses Festtagsgericht spiegelt die opulente Küche Marrakeschs wider.",en:"Lamb caramelises slowly with apricots, honey and toasted almonds into a sweet-savoury sauce. This festive dish reflects the opulent cuisine of Marrakech.",it:"L’agnello caramella lentamente con albicocche, miele e mandorle tostate in una salsa agrodolce. Un piatto delle feste che riflette la cucina sontuosa di Marrakech.",sl:"Jagnjetina se počasi karamelizira z marelicami, medom in praženimi mandlji v sladko-slano omako. Ta praznična jed odraža razkošno kuhinjo Marakeša."},p:"28,90"},
+      {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},img:"images/tajine-hafen.jpg",
+       desc:{de:"Fisch & Meeresfrüchte in Chermoula mit Tomaten & Paprika.",en:"Fish & seafood in chermoula with tomatoes & peppers.",it:"Pesce e frutti di mare in chermoula con pomodori e peperoni.",sl:"Ribe in morski sadeži v chermouli s paradižnikom in papriko."},
+       story:{de:"Fisch und Meeresfrüchte ziehen in Chermoula – einer Marinade aus Koriander, Knoblauch und Zitrone – und garen mit Tomaten und Paprika. Inspiriert von den Hafenstädten der marokkanischen Atlantikküste.",en:"Fish and seafood marinate in chermoula – coriander, garlic and lemon – then cook with tomatoes and peppers. Inspired by the harbour towns of Morocco’s Atlantic coast.",it:"Pesce e frutti di mare marinano nella chermoula – coriandolo, aglio e limone – e cuociono con pomodori e peperoni. Ispirato alle città portuali della costa atlantica del Marocco.",sl:"Ribe in morski sadeži se marinirajo v chermouli – koriander, česen in limona – nato pa kuhajo s paradižnikom in papriko. Navdih iz pristaniških mest maroške atlantske obale."},p:"33,90"}
     ]},
   { id:"couscous", title:"Couscous",
     items:[
       {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},img:"images/hero-couscous.jpg",
-       desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},p:"23,90"},
-      {name:"Couscous Royal",
-       desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},p:"34,60"}
+       desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},
+       story:{de:"Der Grieß wird mehrfach über dem Gemüsesud dampfgegart, bis er federleicht ist. Traditionell wird Couscous am Freitag im Kreis der ganzen Familie serviert.",en:"The semolina is steamed several times over the vegetable broth until feather-light. Traditionally, couscous is served on Fridays with the whole family gathered.",it:"La semola viene cotta al vapore più volte sul brodo di verdure fino a diventare leggerissima. Tradizionalmente il couscous si serve il venerdì con tutta la famiglia riunita.",sl:"Zdrob večkrat parimo nad zelenjavno juho, dokler ni rahel kot pero. Tradicionalno kuskus postrežejo ob petkih, ko se zbere vsa družina."},p:"23,90"},
+      {name:"Couscous Royal",img:"images/couscous-royal.jpg",
+       desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},
+       story:{de:"Lamm, Hähnchen und würzige Merguez krönen den dampfgegarten Couscous mit Gemüse. „Royal“ steht für die festliche Variante mit gleich drei Fleischsorten.",en:"Lamb, chicken and spicy merguez crown the steamed couscous and vegetables. “Royal” marks the festive version with all three meats at once.",it:"Agnello, pollo e merguez piccante coronano il couscous al vapore con verdure. «Royal» indica la versione delle feste con ben tre tipi di carne.",sl:"Jagnjetina, piščanec in pikantni merguez kronajo parjen kuskus z zelenjavo. »Royal« označuje praznično različico s kar tremi vrstami mesa."},p:"34,60"}
     ]},
   { id:"spezialitaeten", title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
     items:[
       {name:"Le Souk Variation",img:"images/tajine-prunes.jpg",
-       desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},p:"26,90"},
-      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},
-       desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},p:"12,50"}
+       desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},
+       story:{de:"Eine Auswahl unserer beliebtesten Spezialitäten auf einem Teller – perfekt zum Teilen und Entdecken. Ideal für alle, die sich einfach nicht entscheiden können.",en:"A selection of our most-loved specialities on one plate – perfect to share and explore. Ideal for anyone who simply can’t choose.",it:"Una selezione delle nostre specialità più amate su un unico piatto – perfetta da condividere e scoprire. Ideale per chi proprio non riesce a decidere.",sl:"Izbor naših najbolj priljubljenih posebnosti na enem krožniku – odlično za deljenje in odkrivanje. Idealno za vse, ki se preprosto ne morejo odločiti."},p:"26,90"},
+      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},img:"images/souk-tapas.jpg",
+       desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},
+       story:{de:"Eine bunte Auswahl orientalischer Vorspeisen mit Dips, Oliven und warmem Fladenbrot. Der ideale Auftakt für einen geselligen Abend im Le Souk.",en:"A colourful selection of oriental starters with dips, olives and warm flatbread. The perfect opening to a convivial evening at Le Souk.",it:"Una colorata selezione di antipasti orientali con salse, olive e pane caldo. L’inizio perfetto per una serata conviviale al Le Souk.",sl:"Pisana izbira orientalskih predjedi z namazi, olivami in toplim kruhom. Popoln začetek prijetnega večera v Le Souku."},p:"12,50"}
     ]},
   { id:"dessert", title:{de:"Dessert",en:"Desserts",it:"Dolci",sl:"Sladice"},
     items:[
-      {name:{de:"Souk-Dessert",en:"Souk Dessert",it:"Dolce Souk",sl:"Souk Sladica"},
-       desc:{de:"Hausgemachte marokkanische Süßspeise des Tages.",en:"Homemade Moroccan sweet of the day.",it:"Dolce marocchino del giorno fatto in casa.",sl:"Domača maroška sladica dneva."},p:"7,20"},
-      {name:{de:"Orientalisches Gebäck",en:"Oriental Pastry",it:"Pasticceria Orientale",sl:"Orientalsko pecivo"},
-       desc:{de:"Feines Gebäck zum Tee.",en:"Fine pastries to enjoy with tea.",it:"Pasticcini fini da gustare con il tè.",sl:"Fino pecivo k čaju."},p:"2,50"}
+      {name:{de:"Souk-Dessert",en:"Souk Dessert",it:"Dolce Souk",sl:"Souk Sladica"},img:"images/souk-dessert.jpg",
+       desc:{de:"Hausgemachte marokkanische Süßspeise des Tages.",en:"Homemade Moroccan sweet of the day.",it:"Dolce marocchino del giorno fatto in casa.",sl:"Domača maroška sladica dneva."},
+       story:{de:"Eine hausgemachte marokkanische Süßspeise, täglich frisch zubereitet. Mit Honig, Nüssen und feinen Gewürzen – der süße Abschluss nach orientalischer Art.",en:"A homemade Moroccan sweet, freshly prepared each day. With honey, nuts and delicate spices – a sweet finish in true oriental style.",it:"Un dolce marocchino fatto in casa, preparato fresco ogni giorno. Con miele, noci e spezie delicate – un finale dolce in vero stile orientale.",sl:"Domača maroška sladica, vsak dan sveže pripravljena. Z medom, oreščki in nežnimi začimbami – sladek zaključek v pravem orientalskem slogu."},p:"7,20"},
+      {name:{de:"Orientalisches Gebäck",en:"Oriental Pastry",it:"Pasticceria Orientale",sl:"Orientalsko pecivo"},img:"images/gebaeck.jpg",
+       desc:{de:"Feines Gebäck zum Tee.",en:"Fine pastries to enjoy with tea.",it:"Pasticcini fini da gustare con il tè.",sl:"Fino pecivo k čaju."},
+       story:{de:"Feine Mandel- und Honiggebäckstücke, wie man sie zum marokkanischen Minztee reicht. Jedes Stück wird traditionell von Hand geformt.",en:"Delicate almond-and-honey pastries, served as they are with Moroccan mint tea. Each piece is traditionally shaped by hand.",it:"Delicati pasticcini a base di mandorle e miele, serviti come da tradizione con il tè alla menta. Ogni pezzo è modellato a mano.",sl:"Fini mandljevo-medeni piškoti, kakršne ponudijo k maroškemu metinem čaju. Vsak kos je tradicionalno oblikovan ročno."},p:"2,50"}
     ]}
 ];
 
@@ -391,18 +405,18 @@ let lang = "de";
 const pick = v => (typeof v === "string") ? v : (v[lang] || v.de);
 
 const REG = {};
-function renderSections(list){
+function renderSections(list, showDesc){
   return list.map(sec=>{
     const note = sec.gb ? `<div class="note">${pick(T.glassBottle)}</div>` : "";
     const rows = sec.items.map((it,idx)=>{
       const uid = sec.id+"-"+idx; REG[uid]=it;
-      const tap = !!(it.desc || it.img);
+      const tap = !!(it.desc || it.img || it.story);
       const bt = it.b ? ` <small>${pick(T.bottle)}</small>` : "";
-      const info = tap ? `<span class="info" aria-hidden="true">i</span>` : "";
+      const desc = (showDesc && it.desc) ? `<span class="desc">${pick(it.desc)}</span>` : "";
       const tag = tap ? "button" : "div";
       const attr = tap ? ` type="button" data-uid="${uid}"` : "";
       return `<${tag} class="item${tap?" tap":""}"${attr}>
-        <span class="left"><span class="name">${pick(it.name)}</span>${info}</span>
+        <span class="left"><span class="name">${pick(it.name)}</span>${desc}</span>
         <span class="lead"></span>
         <span class="price">€ ${it.p}${bt}</span>
       </${tag}>`;
@@ -449,12 +463,16 @@ const sheet=document.getElementById("sheet");
 function openSheet(it){
   document.getElementById("shName").textContent=pick(it.name);
   document.getElementById("shPrice").textContent="€ "+it.p;
-  const d=document.getElementById("shDesc");
-  d.textContent=it.desc?pick(it.desc):"";
-  d.style.display=it.desc?"":"none";
+  const sub=document.getElementById("shSub");
+  sub.textContent=it.desc?pick(it.desc):"";
+  sub.style.display=it.desc?"":"none";
+  const story=document.getElementById("shStory");
+  story.textContent=it.story?pick(it.story):"";
+  story.style.display=it.story?"":"none";
   const img=document.getElementById("shImg");
   if(it.img){img.className="shimg";img.style.backgroundImage="url('"+it.img+"')";img.innerHTML="";}
   else{img.className="shimg ph";img.style.backgroundImage="none";img.innerHTML='<img src="images/logo.jpg" alt="">';}
+  sheet.scrollTop=0;
   overlay.classList.add("open");sheet.classList.add("open");document.body.classList.add("locked");
 }
 function closeSheet(){overlay.classList.remove("open");sheet.classList.remove("open");document.body.classList.remove("locked");}
@@ -488,8 +506,8 @@ function render(){
   document.getElementById("copy").textContent = pick(T.copy);
 
   document.getElementById("menu").innerHTML =
-    `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD)}` +
-    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(DRINKS)}`;
+    `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD,true)}` +
+    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(DRINKS,false)}`;
 
   renderCats();
   setupScrollSpy();
