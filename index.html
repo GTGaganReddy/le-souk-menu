@@ -125,6 +125,29 @@
   .subhead{font-family:'Cinzel',serif;color:var(--gold);font-weight:500;letter-spacing:2.5px;
     text-transform:uppercase;font-size:12.5px;display:flex;align-items:center;gap:12px;margin:24px 0 4px}
   .subhead::after{content:"";flex:1;height:1px;background:rgba(201,162,75,.16)}
+  .secsub{font-style:italic;color:var(--muted);font-size:15px;margin:3px 0 12px;letter-spacing:.3px}
+  .sec-haupt > .secsub{margin-bottom:16px}
+
+  /* dietary badges */
+  .badge{font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;
+    padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--gold-bright);
+    white-space:nowrap;align-self:center;flex:0 0 auto}
+  .badge.b-chef{background:var(--gold);color:var(--black);border-color:var(--gold)}
+  .badge.b-vegan,.badge.b-veg{color:#a7d6a7;border-color:rgba(167,214,167,.4)}
+  .badge.b-spicy{color:#e3936f;border-color:rgba(227,147,111,.45)}
+  .row .badge{margin-left:8px;transform:translateY(-1px)}
+
+  /* filter chips */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
+  .filters .fchip{font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;
+    background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;
+    padding:7px 15px;cursor:pointer;transition:.2s}
+  .filters .fchip:hover{color:var(--gold-bright)}
+  .filters .fchip.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
+
+  /* sheet badges + allergens */
+  .shbadges{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .shallerg{font-size:14px;color:var(--muted);font-style:italic;margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
 
   .item{display:flex;flex-direction:column;gap:3px;padding:11px 6px;width:100%;text-align:left;
     background:none;border:none;border-bottom:1px dotted rgba(201,162,75,.18);
@@ -277,6 +300,7 @@
   </div>
 </div>
 
+<div class="wrap"><div class="filters" id="filters"></div></div>
 <main class="wrap" id="menu"></main>
 
 <div class="sign"><img src="images/banner.jpg" alt="Marokkanische Spezialitäten im Le Souk"></div>
@@ -303,8 +327,10 @@
   <div class="shimg" id="shImg"></div>
   <div class="shbody">
     <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
+    <div class="shbadges" id="shBadges"></div>
     <p class="shsub" id="shSub"></p>
     <div class="shstory" id="shStory"></div>
+    <p class="shallerg" id="shAllerg"></p>
     <div class="shaction" id="shAction"></div>
   </div>
 </aside>
@@ -360,33 +386,46 @@ const T = {
   addedBtn:{de:"✓ Hinzugefügt",en:"✓ Added",it:"✓ Aggiunto",sl:"✓ Dodano"},
   wishEmpty:{de:"Noch nichts ausgewählt. Tippe bei einem Gericht oder Getränk auf das +.",en:"Nothing selected yet. Tap the + on a dish or drink.",it:"Niente ancora. Tocca il + su un piatto o una bevanda.",sl:"Še nič izbranega. Tapni + pri jedi ali pijači."},
   wishClear:{de:"Liste leeren",en:"Clear list",it:"Svuota lista",sl:"Počisti seznam"},
-  tapHint:{de:"Tippe auf ein Gericht für Foto, Details & zum Hinzufügen",en:"Tap a dish for photo, details & to add",it:"Tocca un piatto per foto, dettagli e per aggiungere",sl:"Tapni jed za fotografijo, podrobnosti in dodajanje"}
+  tapHint:{de:"Tippe auf ein Gericht für Foto, Details & zum Hinzufügen",en:"Tap a dish for photo, details & to add",it:"Tocca un piatto per foto, dettagli e per aggiungere",sl:"Tapni jed za fotografijo, podrobnosti in dodajanje"},
+  filterAll:{de:"Alle",en:"All",it:"Tutti",sl:"Vse"},
+  allergLabel:{de:"Allergene",en:"Allergens",it:"Allergeni",sl:"Alergeni"},
+  allergNote:{de:"Allergene & Zusatzstoffe: bitte bei unserem Personal erfragen.",en:"Allergens & additives: please ask our staff.",it:"Allergeni e additivi: chiedete al nostro personale.",sl:"Alergeni in dodatki: vprašajte naše osebje."},
+  tags:{
+    chef:{de:"Chefempfehlung",en:"Chef's choice",it:"Scelta dello chef",sl:"Izbira kuharja"},
+    vegan:{de:"Vegan",en:"Vegan",it:"Vegano",sl:"Vegansko"},
+    veg:{de:"Vegetarisch",en:"Vegetarian",it:"Vegetariano",sl:"Vegetarijansko"},
+    local:{de:"Regional",en:"Local",it:"Regionale",sl:"Lokalno"},
+    spicy:{de:"Scharf",en:"Spicy",it:"Piccante",sl:"Pikantno"},
+    alkfrei:{de:"Alkoholfrei",en:"Non-alcoholic",it:"Analcolico",sl:"Brezalkoholno"}
+  }
 };
 
 const FOOD = [
   { id:"vorspeisen", title:{de:"Vorspeisen",en:"Starters",it:"Antipasti",sl:"Predjedi"},
+    sub:{de:"Mezze & orientalische Kleinigkeiten",en:"Mezze & oriental small plates",it:"Mezze e piccoli piatti orientali",sl:"Mezze in orientalski prigrizki"},
     items:[
-      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},img:"images/souk-tapas.jpg",
+      {name:{de:"Souk-Tapas",en:"Souk Tapas",it:"Souk Tapas",sl:"Souk Tapas"},img:"images/souk-tapas.jpg",tags:["veg"],
        desc:{de:"Orientalische Vorspeisenauswahl mit Brot & Dips.",en:"Oriental starter selection with bread & dips.",it:"Selezione di antipasti orientali con pane e salse.",sl:"Izbor orientalskih predjedi s kruhom in namazi."},
        story:{de:"Eine bunte Auswahl orientalischer Vorspeisen mit Dips, Oliven und warmem Fladenbrot. Der ideale Auftakt für einen geselligen Abend im Le Souk.",en:"A colourful selection of oriental starters with dips, olives and warm flatbread. The perfect opening to a convivial evening at Le Souk.",it:"Una colorata selezione di antipasti orientali con salse, olive e pane caldo. L’inizio perfetto per una serata conviviale al Le Souk.",sl:"Pisana izbira orientalskih predjedi z namazi, olivami in toplim kruhom. Popoln začetek prijetnega večera v Le Souku."},p:"12,50"}
     ]},
   { id:"hauptspeisen", title:{de:"Hauptspeisen",en:"Main Courses",it:"Piatti principali",sl:"Glavne jedi"},
+    sub:{de:"Langsam im Tontopf geschmort",en:"Slow-cooked in the clay pot",it:"Cotti lentamente nella pentola di argilla",sl:"Počasi kuhano v glinenem loncu"},
     subs:[
      { id:"tajines", title:{de:"Tajines",en:"Tagines",it:"Tajine",sl:"Tažini"},
        items:[
-      {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},img:"images/tajine-vegan.jpg",
+      {name:{de:"Tajine Vegan",en:"Tagine Vegan",it:"Tajine Vegana",sl:"Tažin Vegan"},img:"images/tajine-vegan.jpg",tags:["vegan"],
        desc:{de:"Saisonales Gemüse, Kichererbsen, Oliven & orientalische Gewürze.",en:"Seasonal vegetables, chickpeas, olives & oriental spices.",it:"Verdure di stagione, ceci, olive e spezie orientali.",sl:"Sezonska zelenjava, čičerika, olive in orientalske začimbe."},
        story:{de:"Das Gemüse gart langsam und schonend im geschlossenen Tonkegel und behält so seinen vollen Geschmack. Die Tajine ist nach genau diesem Lehmtopf benannt, in dem sie seit Jahrhunderten zubereitet wird.",en:"The vegetables cook slowly and gently inside the sealed clay cone, keeping all their flavour. The dish is named after the very pot it is cooked in – a tradition centuries old.",it:"Le verdure cuociono lentamente nel cono di argilla chiuso, conservando tutto il loro sapore. La tajine prende il nome proprio dalla pentola in cui viene cucinata da secoli.",sl:"Zelenjava se počasi in nežno kuha v zaprtem glinenem stožcu in ohrani ves okus. Jed je poimenovana po prav tej lončeni posodi, v kateri jo pripravljajo že stoletja."},p:"13,90"},
-      {name:{de:"Mediterrane Linsen-Tajine",en:"Mediterranean Lentil Tagine",it:"Tajine di Lenticchie",sl:"Sredozemski Tažin z lečo"},img:"images/tajine-linsen.jpg",
+      {name:{de:"Mediterrane Linsen-Tajine",en:"Mediterranean Lentil Tagine",it:"Tajine di Lenticchie",sl:"Sredozemski Tažin z lečo"},img:"images/tajine-linsen.jpg",tags:["vegan"],
        desc:{de:"Rote Linsen, mediterranes Gemüse, Kreuzkümmel & Koriander.",en:"Red lentils, Mediterranean vegetables, cumin & coriander.",it:"Lenticchie rosse, verdure mediterranee, cumino e coriandolo.",sl:"Rdeča leča, sredozemska zelenjava, kumina in koriander."},
        story:{de:"Rote Linsen werden mit Kreuzkümmel und Koriander sanft eingekocht, bis sie cremig sind. In Marokko gelten Linsen als nahrhaftes Alltagsgericht voller Wärme und Würze.",en:"Red lentils are simmered gently with cumin and coriander until creamy. In Morocco, lentils are a nourishing everyday dish full of warmth and spice.",it:"Le lenticchie rosse vengono cotte dolcemente con cumino e coriandolo fino a diventare cremose. In Marocco le lenticchie sono un piatto quotidiano nutriente, pieno di calore e spezie.",sl:"Rdečo lečo nežno kuhamo s kumino in koriandrom, dokler ne postane kremasta. V Maroku je leča hranljiva vsakdanja jed, polna topline in začimb."},p:"16,80"},
-      {name:"Tajine Fès",img:"images/tajine-fes.jpg",
+      {name:"Tajine Fès",img:"images/tajine-fes.jpg",tags:["chef"],
        desc:{de:"Zartes Hähnchen, eingelegte Zitrone, grüne Oliven & Safran.",en:"Tender chicken, preserved lemon, green olives & saffron.",it:"Pollo tenero, limone in salamoia, olive verdi e zafferano.",sl:"Mehki piščanec, vložena limona, zelene olive in žafran."},
        story:{de:"Hähnchen schmort mit eingelegter Salzzitrone und grünen Oliven, bis es zart vom Knochen fällt. Diese Kombination stammt aus der Königsstadt Fès, dem kulinarischen Herzen Marokkos.",en:"Chicken is braised with salt-preserved lemon and green olives until it falls off the bone. This pairing hails from the royal city of Fès, Morocco’s culinary heart.",it:"Il pollo cuoce con limone sotto sale e olive verdi finché non si stacca dall’osso. Questo abbinamento nasce nella città reale di Fès, cuore culinario del Marocco.",sl:"Piščanec se duši z vloženo soljeno limono in zelenimi olivami, dokler se ne loči od kosti. Ta kombinacija izvira iz kraljevega mesta Fès, kulinaričnega srca Maroka."},p:"21,90"},
-      {name:"Tajine Klagenfurt",img:"images/tajine-klagenfurt.jpg",
+      {name:"Tajine Klagenfurt",img:"images/tajine-klagenfurt.jpg",tags:["local"],
        desc:{de:"Rindfleisch nach Le-Souk-Art, regionales Gemüse & milde Gewürze.",en:"Beef Le Souk style, regional vegetables & mild spices.",it:"Manzo stile Le Souk, verdure regionali e spezie delicate.",sl:"Govedina po Le Souk, lokalna zelenjava in blage začimbe."},
        story:{de:"Unsere Hommage an die Heimat: zartes Rindfleisch mit regionalem Gemüse, langsam in milden Gewürzen geschmort. Eine Brücke zwischen marokkanischer Tradition und Kärntner Produkten.",en:"Our tribute to our home town: tender beef with regional vegetables, slow-braised in mild spices. A bridge between Moroccan tradition and Carinthian produce.",it:"Il nostro omaggio alla città: manzo tenero con verdure regionali, brasato lentamente con spezie delicate. Un ponte tra la tradizione marocchina e i prodotti della Carinzia.",sl:"Naš poklon domačemu mestu: mehka govedina z lokalno zelenjavo, počasi dušena v blagih začimbah. Most med maroško tradicijo in koroškimi pridelki."},p:"23,90"},
-      {name:"Tajine Marrakesch",img:"images/hero-tajine.jpg",
+      {name:"Tajine Marrakesch",img:"images/hero-tajine.jpg",tags:["chef"],
        desc:{de:"Lammfleisch, Aprikosen, Mandeln & Honig-Gewürzsauce.",en:"Lamb, apricots, almonds & honey-spiced sauce.",it:"Agnello, albicocche, mandorle e salsa al miele speziata.",sl:"Jagnjetina, marelice, mandlji in medeno-začimbna omaka."},
        story:{de:"Lamm karamellisiert langsam mit Aprikosen, Honig und gerösteten Mandeln zu einer süß-würzigen Sauce. Dieses Festtagsgericht spiegelt die opulente Küche Marrakeschs wider.",en:"Lamb caramelises slowly with apricots, honey and toasted almonds into a sweet-savoury sauce. This festive dish reflects the opulent cuisine of Marrakech.",it:"L’agnello caramella lentamente con albicocche, miele e mandorle tostate in una salsa agrodolce. Un piatto delle feste che riflette la cucina sontuosa di Marrakech.",sl:"Jagnjetina se počasi karamelizira z marelicami, medom in praženimi mandlji v sladko-slano omako. Ta praznična jed odraža razkošno kuhinjo Marakeša."},p:"28,90"},
       {name:{de:"Hafen-Tajine",en:"Harbour Tagine",it:"Tajine del Porto",sl:"Pristaniški Tažin"},img:"images/tajine-hafen.jpg",
@@ -395,26 +434,27 @@ const FOOD = [
        ]},
      { id:"couscous", title:{de:"Couscous",en:"Couscous",it:"Couscous",sl:"Kuskus"},
        items:[
-      {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},img:"images/hero-couscous.jpg",
+      {name:{de:"Couscous Vegetarisch",en:"Couscous Vegetarian",it:"Couscous Vegetariano",sl:"Vegetarijanski Kuskus"},img:"images/hero-couscous.jpg",tags:["vegan"],
        desc:{de:"Gedämpfter Grieß, sieben Gemüsesorten & Kichererbsen.",en:"Steamed semolina, seven vegetables & chickpeas.",it:"Semola al vapore, sette verdure e ceci.",sl:"Parjen zdrob, sedem vrst zelenjave in čičerika."},
        story:{de:"Der Grieß wird mehrfach über dem Gemüsesud dampfgegart, bis er federleicht ist. Traditionell wird Couscous am Freitag im Kreis der ganzen Familie serviert.",en:"The semolina is steamed several times over the vegetable broth until feather-light. Traditionally, couscous is served on Fridays with the whole family gathered.",it:"La semola viene cotta al vapore più volte sul brodo di verdure fino a diventare leggerissima. Tradizionalmente il couscous si serve il venerdì con tutta la famiglia riunita.",sl:"Zdrob večkrat parimo nad zelenjavno juho, dokler ni rahel kot pero. Tradicionalno kuskus postrežejo ob petkih, ko se zbere vsa družina."},p:"23,90"},
-      {name:"Couscous Royal",img:"images/couscous-royal.jpg",
+      {name:"Couscous Royal",img:"images/couscous-royal.jpg",tags:["chef"],
        desc:{de:"Lamm, Hähnchen & Merguez auf Couscous mit Gemüse.",en:"Lamb, chicken & merguez on couscous with vegetables.",it:"Agnello, pollo e merguez su couscous con verdure.",sl:"Jagnjetina, piščanec in merguez na kuskusu z zelenjavo."},
        story:{de:"Lamm, Hähnchen und würzige Merguez krönen den dampfgegarten Couscous mit Gemüse. „Royal“ steht für die festliche Variante mit gleich drei Fleischsorten.",en:"Lamb, chicken and spicy merguez crown the steamed couscous and vegetables. “Royal” marks the festive version with all three meats at once.",it:"Agnello, pollo e merguez piccante coronano il couscous al vapore con verdure. «Royal» indica la versione delle feste con ben tre tipi di carne.",sl:"Jagnjetina, piščanec in pikantni merguez kronajo parjen kuskus z zelenjavo. »Royal« označuje praznično različico s kar tremi vrstami mesa."},p:"34,60"}
        ]},
      { id:"spezialitaeten", title:{de:"Spezialitäten",en:"Specialities",it:"Specialità",sl:"Posebnosti"},
        items:[
-      {name:"Le Souk Variation",img:"images/tajine-prunes.jpg",
+      {name:"Le Souk Variation",img:"images/tajine-prunes.jpg",tags:["chef","veg"],
        desc:{de:"Auswahl unserer Spezialitäten zum Probieren – ideal für zwei.",en:"A selection of our specialities to share – ideal for two.",it:"Una selezione delle nostre specialità da condividere – ideale per due.",sl:"Izbor naših posebnosti za pokušino – idealno za dva."},
        story:{de:"Eine Auswahl unserer beliebtesten Spezialitäten auf einem Teller – perfekt zum Teilen und Entdecken. Ideal für alle, die sich einfach nicht entscheiden können.",en:"A selection of our most-loved specialities on one plate – perfect to share and explore. Ideal for anyone who simply can’t choose.",it:"Una selezione delle nostre specialità più amate su un unico piatto – perfetta da condividere e scoprire. Ideale per chi proprio non riesce a decidere.",sl:"Izbor naših najbolj priljubljenih posebnosti na enem krožniku – odlično za deljenje in odkrivanje. Idealno za vse, ki se preprosto ne morejo odločiti."},p:"26,90"}
        ]}
     ]},
   { id:"dessert", title:{de:"Dessert",en:"Desserts",it:"Dolci",sl:"Sladice"},
+    sub:{de:"Süßes nach orientalischer Art",en:"Sweet treats, the oriental way",it:"Dolcezze in stile orientale",sl:"Sladice na orientalski način"},
     items:[
-      {name:{de:"Souk-Dessert",en:"Souk Dessert",it:"Dolce Souk",sl:"Souk Sladica"},img:"images/souk-dessert.jpg",
+      {name:{de:"Souk-Dessert",en:"Souk Dessert",it:"Dolce Souk",sl:"Souk Sladica"},img:"images/souk-dessert.jpg",tags:["veg"],
        desc:{de:"Hausgemachte marokkanische Süßspeise des Tages.",en:"Homemade Moroccan sweet of the day.",it:"Dolce marocchino del giorno fatto in casa.",sl:"Domača maroška sladica dneva."},
        story:{de:"Eine hausgemachte marokkanische Süßspeise, täglich frisch zubereitet. Mit Honig, Nüssen und feinen Gewürzen – der süße Abschluss nach orientalischer Art.",en:"A homemade Moroccan sweet, freshly prepared each day. With honey, nuts and delicate spices – a sweet finish in true oriental style.",it:"Un dolce marocchino fatto in casa, preparato fresco ogni giorno. Con miele, noci e spezie delicate – un finale dolce in vero stile orientale.",sl:"Domača maroška sladica, vsak dan sveže pripravljena. Z medom, oreščki in nežnimi začimbami – sladek zaključek v pravem orientalskem slogu."},p:"7,20"},
-      {name:{de:"Orientalisches Gebäck",en:"Oriental Pastry",it:"Pasticceria Orientale",sl:"Orientalsko pecivo"},img:"images/gebaeck.jpg",
+      {name:{de:"Orientalisches Gebäck",en:"Oriental Pastry",it:"Pasticceria Orientale",sl:"Orientalsko pecivo"},img:"images/gebaeck.jpg",tags:["veg"],
        desc:{de:"Feines Gebäck zum Tee.",en:"Fine pastries to enjoy with tea.",it:"Pasticcini fini da gustare con il tè.",sl:"Fino pecivo k čaju."},
        story:{de:"Feine Mandel- und Honiggebäckstücke, wie man sie zum marokkanischen Minztee reicht. Jedes Stück wird traditionell von Hand geformt.",en:"Delicate almond-and-honey pastries, served as they are with Moroccan mint tea. Each piece is traditionally shaped by hand.",it:"Delicati pasticcini a base di mandorle e miele, serviti come da tradizione con il tè alla menta. Ogni pezzo è modellato a mano.",sl:"Fini mandljevo-medeni piškoti, kakršne ponudijo k maroškemu metinem čaju. Vsak kos je tradicionalno oblikovan ročno."},p:"2,50"}
     ]}
@@ -422,6 +462,7 @@ const FOOD = [
 
 const DRINKS = [
   { id:"kaffee-tee", title:{de:"Kaffee & Tee",en:"Coffee & Tea",it:"Caffè & Tè",sl:"Kava & Čaj"},
+    sub:{de:"Marokkanisch & italienisch",en:"Moroccan & Italian",it:"Marocchino e italiano",sl:"Maroško in italijansko"},
     items:[
       {name:"Espresso",p:"3,10",img:"images/coffee.jpg",
        desc:{de:"Kräftiger italienischer Espresso aus frisch gemahlenen Bohnen.",en:"Strong Italian espresso from freshly ground beans.",it:"Espresso italiano intenso da chicchi macinati al momento.",sl:"Močan italijanski espresso iz sveže mletih zrn."}},
@@ -435,6 +476,7 @@ const DRINKS = [
        desc:{de:"Marokkanischer Minztee aus Gunpowder-Grüntee & frischer Minze.",en:"Moroccan mint tea with gunpowder green tea & fresh mint.",it:"Tè alla menta marocchino con tè verde gunpowder e menta fresca.",sl:"Maroški metin čaj z zelenim čajem gunpowder in svežo meto."}}
     ]},
   { id:"alkoholfrei", title:{de:"Alkoholfreie Getränke",en:"Soft Drinks",it:"Analcolici",sl:"Brezalkoholne pijače"},
+    sub:{de:"Erfrischend und leicht",en:"Refreshing and light",it:"Dissetanti e leggeri",sl:"Osvežilno in lahko"},
     items:[
       {name:"Cola / Fanta",p:"4,80",img:"images/cola.jpg",
        desc:{de:"Eiskalt serviert – Cola oder Fanta nach Wahl.",en:"Served ice-cold – your choice of cola or orange.",it:"Servita ghiacciata – cola o aranciata a scelta.",sl:"Ledeno mrzla – cola ali oranžna po izbiri."}},
@@ -448,6 +490,7 @@ const DRINKS = [
        desc:{de:"Prickelndes Mineralwasser.",en:"Sparkling mineral water.",it:"Acqua minerale frizzante.",sl:"Peneča mineralna voda."}}
     ]},
   { id:"bier", title:{de:"Bier",en:"Beer",it:"Birra",sl:"Pivo"},
+    sub:{de:"Frisch gezapft und kühl",en:"Freshly tapped and cool",it:"Alla spina e fresca",sl:"Sveže točeno in hladno"},
     items:[
       {name:"Heineken",p:"4,60",img:"images/beer.jpg",
        desc:{de:"Premium-Lagerbier, eisgekühlt serviert.",en:"Premium lager, served ice-cold.",it:"Lager premium, servita ghiacciata.",sl:"Vrhunski lager, ledeno mrzel."}},
@@ -457,10 +500,11 @@ const DRINKS = [
        desc:{de:"Frisch gezapftes Lagerbier vom Fass, große Halbe.",en:"Freshly tapped draught lager, large.",it:"Lager alla spina appena spillata, grande.",sl:"Sveže točeno točeno pivo, veliko."}},
       {name:{de:"Weißbier",en:"Wheat Beer",it:"Birra di frumento",sl:"Pšenično pivo"},p:"5,20",img:"images/wheat-beer.jpg",
        desc:{de:"Naturtrübes Weizenbier mit feiner Hefenote.",en:"Cloudy wheat beer with a fine yeast note.",it:"Birra di frumento non filtrata, con nota di lievito.",sl:"Motno pšenično pivo s fino kvasno noto."}},
-      {name:{de:"Alkoholfreies Bier",en:"Non-alcoholic Beer",it:"Birra analcolica",sl:"Brezalkoholno pivo"},p:"5,20",img:"images/beer.jpg",
+      {name:{de:"Alkoholfreies Bier",en:"Non-alcoholic Beer",it:"Birra analcolica",sl:"Brezalkoholno pivo"},p:"5,20",img:"images/beer.jpg",tags:["alkfrei"],
        desc:{de:"Alkoholfreies Bier – erfrischend und leicht.",en:"Non-alcoholic beer – refreshing and light.",it:"Birra analcolica – fresca e leggera.",sl:"Brezalkoholno pivo – osvežilno in lahko."}}
     ]},
   { id:"wein", title:{de:"Wein",en:"Wine",it:"Vino",sl:"Vino"}, gb:true,
+    sub:{de:"Aus Österreich und der Welt",en:"From Austria and beyond",it:"Dall'Austria e dal mondo",sl:"Iz Avstrije in sveta"},
     items:[
       {name:{de:"Grüner Veltliner",en:"Grüner Veltliner",it:"Grüner Veltliner",sl:"Grüner Veltliner"},img:"images/white-wine.jpg",p:"4,20 / 24,60",
        desc:{de:"Österreichs Aushängeschild – frisch, würzig, mit feiner Pfeffernote.",en:"Austria’s flagship white – crisp, spicy, with a hint of pepper.",it:"Il bianco simbolo dell’Austria – fresco, speziato, con note di pepe.",sl:"Avstrijska prepoznavna sorta – sveže, začinjeno, z noto popra."}},
@@ -486,6 +530,7 @@ const DRINKS = [
        desc:{de:"Edler Rosé in der Flasche – elegant und fein-fruchtig.",en:"Premium bottled rosé – elegant and finely fruity.",it:"Rosé pregiato in bottiglia – elegante e finemente fruttato.",sl:"Vrhunski rosé v steklenici – eleganten in fino sadkast."}}
     ]},
   { id:"aperitif", title:{de:"Aperitif",en:"Aperitifs",it:"Aperitivi",sl:"Aperitivi"},
+    sub:{de:"Zum Ankommen und Anstoßen",en:"To arrive and toast",it:"Per iniziare e brindare",sl:"Za dobrodošlico in nazdravljanje"},
     items:[
       {name:"Prosecco",img:"images/prosecco.jpg",p:"5,10 / 23,50",
        desc:{de:"Italienischer Schaumwein – fein perlend und frisch.",en:"Italian sparkling wine – finely sparkling and fresh.",it:"Spumante italiano – dal perlage fine e fresco.",sl:"Italijansko peneče vino – fino in sveže."}},
@@ -503,6 +548,7 @@ const DRINKS = [
        desc:{de:"Averna mit Zitrone – herb-fruchtig.",en:"Averna with lemon – tart and fruity.",it:"Averna con limone – aspro e fruttato.",sl:"Averna z limono – kiselkasto-sadno."}}
     ]},
   { id:"cocktails", title:{de:"Cocktails & Spritzer",en:"Cocktails & Spritz",it:"Cocktail & Spritz",sl:"Koktajli & Špricer"},
+    sub:{de:"Gerührt, geschüttelt, gespritzt",en:"Stirred, shaken, spritzed",it:"Mescolati, shakerati, spritz",sl:"Mešano, streseno, špricano"},
     items:[
       {name:"Gin Tonic",img:"images/gin-tonic.jpg",p:"8,90",
        desc:{de:"Gin & Tonic Water mit Zitrus – klar und spritzig.",en:"Gin & tonic with citrus – clean and crisp.",it:"Gin e tonica con agrumi – pulito e frizzante.",sl:"Gin in tonik z citrusi – čisto in osvežilno."}},
@@ -512,6 +558,7 @@ const DRINKS = [
        desc:{de:"Weißwein mit Soda – leicht und erfrischend.",en:"White wine with soda – light and refreshing.",it:"Vino bianco e soda – leggero e dissetante.",sl:"Belo vino s sodo – lahko in osvežilno."}}
     ]},
   { id:"spirituosen", title:{de:"Spirituosen",en:"Spirits",it:"Distillati",sl:"Žgane pijače"},
+    sub:{de:"Edles zum Abschluss",en:"Fine spirits to finish",it:"Distillati per finire",sl:"Žgane pijače za zaključek"},
     items:[
       {name:"Jack Daniel's",img:"images/whiskey.jpg",p:"5,90",
        desc:{de:"Tennessee Whiskey aus den USA – mild und rauchig.",en:"Tennessee whiskey from the USA – mellow and smoky.",it:"Whiskey del Tennessee (USA) – morbido e affumicato.",sl:"Tennessee whiskey iz ZDA – mehko in zadimljeno."}},
@@ -540,6 +587,16 @@ function setQty(uid,q){ if(q<=0) delete wish[uid]; else wish[uid]=q; saveWish();
 function addQty(uid,d){ setQty(uid, qty(uid)+d); }
 function toggleWish(uid){ setQty(uid, inWish(uid)?0:1); }
 
+function itemTags(it, prefix){
+  let tags=(it.tags||[]).slice();
+  if((prefix==="kaffee-tee"||prefix==="alkoholfrei") && !tags.includes("alkfrei")) tags.push("alkfrei");
+  if(tags.includes("vegan") && !tags.includes("veg")) tags.push("veg");
+  return tags;
+}
+function badgesHtml(tags){
+  const show=tags.filter(t=>t!=="alkfrei" && !(t==="veg"&&tags.includes("vegan")));
+  return show.map(t=>`<span class="badge b-${t}">${pick(T.tags[t])}</span>`).join("");
+}
 function renderItems(items, prefix, showDesc){
   return items.map((it,idx)=>{
     const uid = prefix+"-"+idx; REG[uid]=it;
@@ -548,21 +605,25 @@ function renderItems(items, prefix, showDesc){
     const desc = (showDesc && it.desc) ? `<span class="desc">${pick(it.desc)}</span>` : "";
     const add = tap ? `<button class="add${inWish(uid)?" on":""}" type="button" data-add="${uid}" aria-label="merken">${inWish(uid)?"✓":"+"}</button>` : "";
     const attr = tap ? ` data-uid="${uid}" role="button" tabindex="0"` : "";
-    return `<div class="item${tap?" tap":""}"${attr}>
-        <span class="row"><span class="name">${pick(it.name)}</span><span class="lead"></span><span class="price">€ ${it.p}${bt}</span>${add}</span>
+    const tags = itemTags(it, prefix);
+    const tagAttr = tags.length ? ` data-tags="${tags.join(' ')}"` : "";
+    const badges = badgesHtml(tags);
+    return `<div class="item${tap?" tap":""}"${attr}${tagAttr}>
+        <span class="row"><span class="name">${pick(it.name)}</span>${badges}<span class="lead"></span><span class="price">€ ${it.p}${bt}</span>${add}</span>
         ${desc}
       </div>`;
   }).join("");
 }
 function renderSections(list, showDesc){
   return list.map(sec=>{
+    const st = sec.sub ? `<p class="secsub">${pick(sec.sub)}</p>` : "";
     if(sec.subs){
       const subs = sec.subs.map(sub=>
         `<div class="subsec" id="sec-${sub.id}"><h4 class="subhead">${pick(sub.title)}</h4>${renderItems(sub.items, sub.id, showDesc)}</div>`).join("");
-      return `<div class="section sec-haupt" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${subs}</div>`;
+      return `<div class="section sec-haupt" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${st}${subs}</div>`;
     }
     const note = sec.gb ? `<div class="note">${pick(T.glassBottle)}</div>` : "";
-    return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${note}${renderItems(sec.items, sec.id, showDesc)}</div>`;
+    return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${st}${note}${renderItems(sec.items, sec.id, showDesc)}</div>`;
   }).join("");
 }
 
@@ -571,6 +632,37 @@ function renderCats(){
   document.getElementById("cats").innerHTML = all.map(sec=>
     `<a href="#sec-${sec.id}" data-target="sec-${sec.id}">${pick(sec.title)}</a>`).join("");
 }
+
+let filter="all";
+function renderFilters(){
+  const fl=[["all",T.filterAll],["chef",T.tags.chef],["veg",T.tags.veg],["vegan",T.tags.vegan],["alkfrei",T.tags.alkfrei]];
+  document.getElementById("filters").innerHTML=fl.map(([f,lab])=>
+    `<button class="fchip${f===filter?' active':''}" type="button" data-filter="${f}">${pick(lab)}</button>`).join("");
+}
+function applyFilter(){
+  document.querySelectorAll('#menu .item').forEach(it=>{
+    const tags=(it.dataset.tags||'').split(' ');
+    it.style.display=(filter==='all'||tags.includes(filter))?'':'none';
+  });
+  document.querySelectorAll('#menu .subsec').forEach(ss=>{
+    ss.style.display=[...ss.querySelectorAll('.item')].some(i=>i.style.display!=='none')?'':'none';
+  });
+  document.querySelectorAll('#menu .section').forEach(sec=>{
+    sec.style.display=[...sec.querySelectorAll('.item')].some(i=>i.style.display!=='none')?'':'none';
+  });
+  document.querySelectorAll('#menu .group-title').forEach(gt=>{
+    let el=gt.nextElementSibling, vis=false;
+    while(el && !el.classList.contains('group-title')){
+      if(el.classList.contains('section') && el.style.display!=='none'){vis=true;break;}
+      el=el.nextElementSibling;
+    }
+    gt.style.display=vis?'':'none';
+  });
+}
+document.getElementById("filters").addEventListener("click",e=>{
+  const b=e.target.closest("[data-filter]"); if(!b) return;
+  filter=b.dataset.filter; renderFilters(); applyFilter();
+});
 
 let spy;
 function setupScrollSpy(){
@@ -611,6 +703,9 @@ function openSheet(uid){
   const story=document.getElementById("shStory");
   story.textContent=it.story?pick(it.story):"";
   story.style.display=it.story?"":"none";
+  const prefix=uid.slice(0,uid.lastIndexOf("-"));
+  document.getElementById("shBadges").innerHTML=badgesHtml(itemTags(it,prefix));
+  document.getElementById("shAllerg").textContent=it.allerg?(pick(T.allergLabel)+": "+it.allerg):pick(T.allergNote);
   const img=document.getElementById("shImg");
   if(it.img){img.className="shimg";img.style.backgroundImage="url('"+it.img+"')";img.innerHTML="";}
   else{img.className="shimg ph";img.style.backgroundImage="none";img.innerHTML='<img src="images/logo.jpg" alt="">';}
@@ -715,8 +810,10 @@ function render(){
   document.getElementById("tapHint").classList.toggle("show", !localStorage.getItem("lesouk_hint"));
 
   renderCats();
+  renderFilters();
   setupScrollSpy();
   updateWishUI();
+  applyFilter();
 
   document.querySelectorAll("#lang button").forEach(b=>
     b.classList.toggle("active", b.dataset.lang===lang));
