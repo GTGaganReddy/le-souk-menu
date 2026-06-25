@@ -186,8 +186,10 @@
     background:var(--panel);border:1px solid var(--line);border-bottom:none;
     border-radius:20px 20px 0 0;box-shadow:0 -16px 50px rgba(0,0,0,.6);
     transform:translateY(102%);transition:transform .34s cubic-bezier(.2,.8,.2,1);
-    max-height:82vh;overflow-y:auto}
+    max-height:86vh;overflow:hidden;display:flex;flex-direction:column}
   .sheet.open{transform:translateY(0)}
+  .shscroll{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .wsheet .wbody{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .sheet .grip{width:42px;height:4px;border-radius:99px;background:var(--line);margin:10px auto 0}
   .sheet .shimg{height:200px;background-size:cover;background-position:center;margin:14px 16px 0;border-radius:12px;border:1px solid var(--line)}
   .sheet .shimg.ph{display:flex;align-items:center;justify-content:center;background:#0d0d10}
@@ -199,7 +201,10 @@
   .sheet .shsub{font-size:19px;font-style:italic;color:var(--gold-bright);margin-top:10px;line-height:1.5}
   .sheet .shstory{font-size:18px;color:var(--cream);opacity:.92;margin-top:14px;line-height:1.6}
   .sheet .shstory .lbl{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin:16px 0 4px}
-  .sheet .shclose{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+  .sheet .shclose{position:absolute;top:12px;right:12px;z-index:6;width:34px;height:34px;border-radius:50%;
+    background:rgba(0,0,0,.55);border:1px solid var(--line);color:var(--cream);font-size:22px;cursor:pointer;
+    line-height:1;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+  .sheet .shclose:hover{color:var(--gold-bright);border-color:var(--gold)}
   .shaction{margin-top:22px;display:flex;align-items:center;gap:16px}
   .shaction .shadd{display:inline-flex;align-items:center;gap:8px;
     font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
@@ -318,10 +323,6 @@
 
 <div class="wrap">
   <div class="hero" id="hero"></div>
-  <div class="scrollcue" id="scrollCue" aria-hidden="true">
-    <span id="scrollCueText">Speisekarte</span>
-    <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-  </div>
 </div>
 
 <div class="wrap"><div class="filters" id="filters"></div></div>
@@ -354,14 +355,16 @@
 <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detail">
   <button class="shclose" id="shClose" aria-label="Schließen">&times;</button>
   <div class="grip"></div>
-  <div class="shimg" id="shImg"></div>
-  <div class="shbody">
-    <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
-    <div class="shbadges" id="shBadges"></div>
-    <p class="shsub" id="shSub"></p>
-    <div class="shstory" id="shStory"></div>
-    <p class="shallerg" id="shAllerg"></p>
-    <div class="shaction" id="shAction"></div>
+  <div class="shscroll" id="shScroll">
+    <div class="shimg" id="shImg"></div>
+    <div class="shbody">
+      <div class="shhead"><h4 id="shName"></h4><span class="shprice" id="shPrice"></span></div>
+      <div class="shbadges" id="shBadges"></div>
+      <p class="shsub" id="shSub"></p>
+      <div class="shstory" id="shStory"></div>
+      <p class="shallerg" id="shAllerg"></p>
+      <div class="shaction" id="shAction"></div>
+    </div>
   </div>
 </aside>
 
@@ -679,9 +682,9 @@ function renderCats(){
 
 // swipeable category carousel under the title
 const HERO_CATS=[
-  {img:"images/souk-tapas.jpg",sec:"vorspeisen"},
   {img:"images/hero-tajine.jpg",sec:"tajines"},
   {img:"images/hero-couscous.jpg",sec:"couscous"},
+  {img:"images/souk-tapas.jpg",sec:"vorspeisen"},
   {img:"images/souk-dessert.jpg",sec:"dessert"},
   {img:"images/red-wine.jpg",sec:"wein"},
   {img:"images/mojito.jpg",sec:"cocktails"},
@@ -786,7 +789,7 @@ function openSheet(uid){
   if(it.img){img.className="shimg";img.style.backgroundImage="url('"+it.img+"')";img.innerHTML="";}
   else{img.className="shimg ph";img.style.backgroundImage="none";img.innerHTML='<img src="images/logo.jpg" alt="">';}
   sheet.dataset.uid=uid; renderShAction(uid);
-  sheet.scrollTop=0;
+  document.getElementById("shScroll").scrollTop=0;
   overlay.classList.add("open");sheet.classList.add("open");document.body.classList.add("locked");
   markHintSeen();
 }
@@ -839,7 +842,7 @@ function renderWishList(){
       <span class="wp">€ ${it.p}</span>
     </div>`;}).join("");
 }
-function openWish(){renderWishList();wsheet.scrollTop=0;wOverlay.classList.add("open");wsheet.classList.add("open");document.body.classList.add("locked");}
+function openWish(){renderWishList();wsheet.querySelector(".wbody").scrollTop=0;wOverlay.classList.add("open");wsheet.classList.add("open");document.body.classList.add("locked");}
 function closeWish(){wOverlay.classList.remove("open");wsheet.classList.remove("open");document.body.classList.remove("locked");}
 document.getElementById("fab").addEventListener("click",openWish);
 wOverlay.addEventListener("click",closeWish);
@@ -866,10 +869,6 @@ document.getElementById("hero").addEventListener("click",e=>{
   const a=e.target.closest("a"); if(!a) return;
   e.preventDefault(); scrollToSec(a.getAttribute("href").slice(1));
 });
-let cueDone=false;
-window.addEventListener("scroll",()=>{
-  if(!cueDone && window.scrollY>60){cueDone=true;document.getElementById("scrollCue").classList.add("hide");}
-},{passive:true});
 
 function render(){
   document.documentElement.lang = lang;
@@ -888,7 +887,6 @@ function render(){
 
   document.getElementById("tapHintText").textContent = pick(T.tapHint);
   document.getElementById("tapHint").classList.toggle("show", !localStorage.getItem("lesouk_hint"));
-  document.getElementById("scrollCueText").textContent = pick(T.scrollCue);
 
   renderCats();
   renderFilters();
