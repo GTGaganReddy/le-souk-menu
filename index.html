@@ -86,6 +86,7 @@
   /* ---- Header ---- */
   header{text-align:center;padding:40px 0 14px}
   header .logo{width:150px;margin:0 auto 6px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+  .homelink{display:block;text-decoration:none;color:inherit}
   .brand{font-family:'Great Vibes',cursive;color:var(--gold-bright);
     font-size:74px;line-height:1;margin:4px 0 2px}
   .sub{font-family:'Cinzel',serif;letter-spacing:5px;text-transform:uppercase;
@@ -283,8 +284,10 @@
 </div>
 
 <header class="wrap">
-  <img class="logo" src="images/logo.jpg" alt="Le Souk Logo">
-  <div class="brand">Le Souk</div>
+  <a href="home.html" class="homelink" aria-label="Zur Startseite">
+    <img class="logo" src="images/logo.jpg" alt="Le Souk Logo">
+    <div class="brand">Le Souk</div>
+  </a>
   <div class="sub" id="sub">Marokkanische Küche · Café · Bistro</div>
   <p class="tagline" id="tagline"></p>
 </header>
