@@ -90,22 +90,24 @@
   header{text-align:center;padding:26px 0 12px}
   .homelink{display:block;text-decoration:none;color:inherit}
   .brand{font-family:'Great Vibes',cursive;color:var(--gold-bright);
-    font-size:74px;line-height:1;margin:4px 0 2px}
+    font-size:74px;line-height:1.26;padding-top:6px;margin:0 0 2px}
   .sub{font-family:'Cinzel',serif;letter-spacing:5px;text-transform:uppercase;
     font-size:12.5px;color:var(--muted)}
   .tagline{font-style:italic;color:var(--cream);max-width:480px;margin:22px auto 4px;
     font-size:20px;opacity:.92}
 
   /* ---- Hero photos ---- */
-  .hero{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0 8px}
-  .hero figure{position:relative;border:1px solid var(--line);border-radius:4px;overflow:hidden}
-  .hero img{width:100%;height:230px;object-fit:cover;transition:transform .6s ease}
-  .hero figure:hover img{transform:scale(1.05)}
-  .hero figcaption{
-    position:absolute;left:0;right:0;bottom:0;
-    background:linear-gradient(transparent,rgba(0,0,0,.85));
-    color:var(--gold-bright);font-family:'Cinzel',serif;letter-spacing:1.5px;
-    font-size:11px;text-transform:uppercase;text-align:center;padding:22px 6px 8px}
+  .hero{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;margin:24px 0 6px;padding-bottom:4px}
+  .hero::-webkit-scrollbar{display:none}
+  .herocard{flex:0 0 auto;width:150px;scroll-snap-align:start;position:relative;display:block;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;text-decoration:none}
+  .herocard-img{height:152px;background-size:cover;background-position:center;transition:transform .5s ease}
+  .herocard:hover .herocard-img{transform:scale(1.06)}
+  .herocard-cap{position:absolute;left:0;right:0;bottom:0;padding:20px 8px 9px;
+    background:linear-gradient(transparent,rgba(0,0,0,.88));
+    color:var(--gold-bright);font-family:'Cinzel',serif;letter-spacing:1.5px;text-transform:uppercase;
+    font-size:11px;text-align:center}
 
   /* ---- Section ---- */
   .group-title{
@@ -141,8 +143,10 @@
   .badges{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 1px}
 
   /* filter chips */
-  .filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 0}
-  .filters .fchip{font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;
+  .filters{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;scrollbar-width:none;
+    margin:22px 0 0;padding-bottom:4px}
+  .filters::-webkit-scrollbar{display:none}
+  .filters .fchip{flex:0 0 auto;white-space:nowrap;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;
     background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;
     padding:7px 15px;cursor:pointer;transition:.2s}
   .filters .fchip:hover{color:var(--gold-bright)}
@@ -313,10 +317,7 @@
 </header>
 
 <div class="wrap">
-  <div class="hero">
-    <figure><a href="#sec-tajines"><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></a></figure>
-    <figure><a href="#sec-couscous"><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></a></figure>
-  </div>
+  <div class="hero" id="hero"></div>
   <div class="scrollcue" id="scrollCue" aria-hidden="true">
     <span id="scrollCueText">Speisekarte</span>
     <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
@@ -676,6 +677,30 @@ function renderCats(){
     `<a href="#sec-${sec.id}" data-target="sec-${sec.id}">${pick(sec.title)}</a>`).join("");
 }
 
+// swipeable category carousel under the title
+const HERO_CATS=[
+  {img:"images/souk-tapas.jpg",sec:"vorspeisen"},
+  {img:"images/hero-tajine.jpg",sec:"tajines"},
+  {img:"images/hero-couscous.jpg",sec:"couscous"},
+  {img:"images/souk-dessert.jpg",sec:"dessert"},
+  {img:"images/red-wine.jpg",sec:"wein"},
+  {img:"images/mojito.jpg",sec:"cocktails"},
+  {img:"images/mint-tea.jpg",sec:"kaffee-tee"}
+];
+function findSec(id){
+  for(const s of [...FOOD,...DRINKS]){
+    if(s.id===id) return s;
+    if(s.subs) for(const sub of s.subs) if(sub.id===id) return sub;
+  }
+  return null;
+}
+function renderHero(){
+  document.getElementById("hero").innerHTML = HERO_CATS.map(c=>{
+    const t=findSec(c.sec); if(!t) return "";
+    return `<a class="herocard" href="#sec-${c.sec}"><div class="herocard-img" style="background-image:url('${c.img}')"></div><span class="herocard-cap">${pick(t.title)}</span></a>`;
+  }).join("");
+}
+
 let filter="all";
 function renderFilters(){
   const fl=[["all",T.filterAll],["chef",T.tags.chef],["veg",T.tags.veg],["vegan",T.tags.vegan],["alkfrei",T.tags.alkfrei]];
@@ -837,9 +862,10 @@ document.getElementById("cats").addEventListener("click",e=>{
   const a=e.target.closest("a"); if(!a) return;
   e.preventDefault(); scrollToSec(a.dataset.target);
 });
-document.querySelectorAll(".hero a").forEach(a=>a.addEventListener("click",e=>{
+document.getElementById("hero").addEventListener("click",e=>{
+  const a=e.target.closest("a"); if(!a) return;
   e.preventDefault(); scrollToSec(a.getAttribute("href").slice(1));
-}));
+});
 let cueDone=false;
 window.addEventListener("scroll",()=>{
   if(!cueDone && window.scrollY>60){cueDone=true;document.getElementById("scrollCue").classList.add("hide");}
@@ -849,8 +875,7 @@ function render(){
   document.documentElement.lang = lang;
   document.getElementById("sub").textContent = pick(T.sub);
   document.getElementById("tagline").textContent = pick(T.tagline);
-  document.getElementById("cap1").textContent = pick(T.cap1);
-  document.getElementById("cap2").textContent = pick(T.cap2);
+  renderHero();
   document.getElementById("hoursTitle").textContent = pick(T.hoursTitle);
   document.getElementById("d1").textContent = pick(T.d1);
   document.getElementById("d2").textContent = pick(T.d2);
