@@ -150,18 +150,22 @@
   .shbadges{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
   .shallerg{font-size:14px;color:var(--muted);font-style:italic;margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
 
-  .item{display:flex;flex-direction:column;gap:3px;padding:11px 6px;width:100%;text-align:left;
-    background:none;border:none;border-bottom:1px dotted rgba(201,162,75,.18);
-    color:inherit;font:inherit;border-radius:6px}
-  .item:last-child{border-bottom:none}
-  .item.tap{cursor:pointer;transition:background .2s}
-  .item.tap:hover,.item.tap:active{background:rgba(201,162,75,.08)}
-  .item .row{display:flex;align-items:baseline;gap:8px;width:100%}
-  .item .name{font-weight:600;font-size:20px;color:var(--cream)}
-  .item .lead{flex:1;border-bottom:1px dotted rgba(201,162,75,.35);transform:translateY(-5px);min-width:16px}
+  .item.card{position:relative;display:flex;gap:14px;align-items:center;width:100%;text-align:left;
+    background:rgba(255,255,255,.018);border:1px solid var(--line);border-radius:14px;
+    padding:13px 15px;margin:14px 0;color:inherit;font:inherit}
+  .item.tap{cursor:pointer;transition:.2s}
+  .item.tap:hover,.item.tap:active{background:rgba(201,162,75,.07);border-color:rgba(201,162,75,.5)}
+  .card-thumb{flex:0 0 auto;width:82px;height:82px;border-radius:10px;background-size:cover;
+    background-position:center;border:1px solid var(--line)}
+  .card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+  .card-top{display:flex;align-items:center;gap:10px}
+  .item .name{font-weight:600;font-size:19.5px;color:var(--cream);flex:1;min-width:0;line-height:1.2}
   .item .price{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-bright);white-space:nowrap;letter-spacing:.5px}
   .item .price small{color:var(--muted);font-size:12px}
-  .item .desc{font-style:italic;font-weight:400;font-size:16px;color:var(--muted);line-height:1.42;max-width:64ch}
+  .item .desc{font-style:italic;font-weight:400;font-size:15.5px;color:var(--muted);line-height:1.4}
+  .corner-tags{position:absolute;top:-9px;right:14px;display:flex;gap:6px;z-index:2}
+  .corner-tags .badge{background:#161310;box-shadow:0 3px 10px rgba(0,0,0,.5)}
+  .corner-tags .badge.b-chef{background:var(--gold);color:var(--black)}
 
   /* ---- Dish / drink detail sheet (half screen) ---- */
   .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);
@@ -203,11 +207,20 @@
   .taphint.show{display:flex;animation:fabin .5s ease}
   .taphint svg{flex:0 0 auto}
 
+  /* animated scroll-down cue */
+  .scrollcue{position:fixed;left:50%;bottom:22px;z-index:25;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    color:var(--gold-bright);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;
+    text-shadow:0 2px 10px rgba(0,0,0,.8);transition:opacity .45s;animation:bob 1.7s ease-in-out infinite}
+  .scrollcue svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2}
+  .scrollcue.hide{opacity:0}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+
   /* ---- Add (+) button on each row ---- */
-  .item .add{flex:0 0 auto;width:26px;height:26px;border-radius:50%;cursor:pointer;
+  .item .add{flex:0 0 auto;width:30px;height:30px;border-radius:50%;cursor:pointer;
     border:1px solid var(--line);background:transparent;color:var(--gold-bright);
-    font-size:18px;line-height:1;display:inline-flex;align-items:center;justify-content:center;
-    transition:.18s;transform:translateY(-2px)}
+    font-size:19px;line-height:1;display:inline-flex;align-items:center;justify-content:center;
+    transition:.18s}
   .item .add:hover{border-color:var(--gold)}
   .item .add.on{background:var(--gold);color:var(--black);border-color:var(--gold)}
 
@@ -323,6 +336,11 @@
   <div class="copyright" id="copy"></div>
 </footer>
 
+<div class="scrollcue" id="scrollCue" aria-hidden="true">
+  <span id="scrollCueText">Speisekarte</span>
+  <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+
 <div class="overlay" id="overlay"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detail">
   <button class="shclose" id="shClose" aria-label="Schließen">&times;</button>
@@ -391,6 +409,7 @@ const T = {
   wishClear:{de:"Liste leeren",en:"Clear list",it:"Svuota lista",sl:"Počisti seznam"},
   tapHint:{de:"Tippe auf ein Gericht für Foto, Details & zum Hinzufügen",en:"Tap a dish for photo, details & to add",it:"Tocca un piatto per foto, dettagli e per aggiungere",sl:"Tapni jed za fotografijo, podrobnosti in dodajanje"},
   filterAll:{de:"Alle",en:"All",it:"Tutti",sl:"Vse"},
+  scrollCue:{de:"Speisekarte",en:"Menu",it:"Menu",sl:"Jedilnik"},
   allergLabel:{de:"Allergene",en:"Allergens",it:"Allergeni",sl:"Alergeni"},
   allergNote:{de:"Allergene & Zusatzstoffe: bitte bei unserem Personal erfragen.",en:"Allergens & additives: please ask our staff.",it:"Allergeni e additivi: chiedete al nostro personale.",sl:"Alergeni in dodatki: vprašajte naše osebje."},
   tags:{
@@ -600,7 +619,7 @@ function badgesHtml(tags){
   const show=tags.filter(t=>t!=="alkfrei" && !(t==="veg"&&tags.includes("vegan")));
   return show.map(t=>`<span class="badge b-${t}">${pick(T.tags[t])}</span>`).join("");
 }
-function renderItems(items, prefix, showDesc){
+function renderItems(items, prefix, showDesc, thumb){
   return items.map((it,idx)=>{
     const uid = prefix+"-"+idx; REG[uid]=it;
     const tap = !!(it.desc || it.img || it.story);
@@ -610,24 +629,29 @@ function renderItems(items, prefix, showDesc){
     const attr = tap ? ` data-uid="${uid}" role="button" tabindex="0"` : "";
     const tags = itemTags(it, prefix);
     const tagAttr = tags.length ? ` data-tags="${tags.join(' ')}"` : "";
-    const badges = badgesHtml(tags);
-    return `<div class="item${tap?" tap":""}"${attr}${tagAttr}>
-        <span class="row"><span class="name">${pick(it.name)}</span><span class="lead"></span><span class="price">€ ${it.p}${bt}</span>${add}</span>
-        ${badges?`<span class="badges">${badges}</span>`:""}
-        ${desc}
+    const showTags = tags.filter(t=>t!=="alkfrei" && !(t==="veg"&&tags.includes("vegan")));
+    const corner = showTags.length ? `<span class="corner-tags">${showTags.map(t=>`<span class="badge b-${t}">${pick(T.tags[t])}</span>`).join("")}</span>` : "";
+    const thumbHtml = (thumb && it.img) ? `<div class="card-thumb" style="background-image:url('${it.img}')"></div>` : "";
+    return `<div class="item card${tap?" tap":""}"${attr}${tagAttr}>
+        ${thumbHtml}
+        <div class="card-body">
+          <div class="card-top"><span class="name">${pick(it.name)}</span><span class="price">€ ${it.p}${bt}</span>${add}</div>
+          ${desc}
+        </div>
+        ${corner}
       </div>`;
   }).join("");
 }
-function renderSections(list, showDesc){
+function renderSections(list, showDesc, thumb){
   return list.map(sec=>{
     const st = sec.sub ? `<p class="secsub">${pick(sec.sub)}</p>` : "";
     if(sec.subs){
       const subs = sec.subs.map(sub=>
-        `<div class="subsec" id="sec-${sub.id}"><h4 class="subhead">${pick(sub.title)}</h4>${renderItems(sub.items, sub.id, showDesc)}</div>`).join("");
+        `<div class="subsec" id="sec-${sub.id}"><h4 class="subhead">${pick(sub.title)}</h4>${renderItems(sub.items, sub.id, showDesc, thumb)}</div>`).join("");
       return `<div class="section sec-haupt" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${st}${subs}</div>`;
     }
     const note = sec.gb ? `<div class="note">${pick(T.glassBottle)}</div>` : "";
-    return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${st}${note}${renderItems(sec.items, sec.id, showDesc)}</div>`;
+    return `<div class="section" id="sec-${sec.id}"><h3>${pick(sec.title)}</h3>${st}${note}${renderItems(sec.items, sec.id, showDesc, thumb)}</div>`;
   }).join("");
 }
 
@@ -801,6 +825,10 @@ document.getElementById("cats").addEventListener("click",e=>{
 document.querySelectorAll(".hero a").forEach(a=>a.addEventListener("click",e=>{
   e.preventDefault(); scrollToSec(a.getAttribute("href").slice(1));
 }));
+let cueDone=false;
+window.addEventListener("scroll",()=>{
+  if(!cueDone && window.scrollY>60){cueDone=true;document.getElementById("scrollCue").classList.add("hide");}
+},{passive:true});
 
 function render(){
   document.documentElement.lang = lang;
@@ -815,11 +843,12 @@ function render(){
   document.getElementById("copy").textContent = pick(T.copy);
 
   document.getElementById("menu").innerHTML =
-    `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD,true)}` +
-    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(orderedDrinks(),false)}`;
+    `<div class="group-title">${pick(T.foodGroup)}</div>${renderSections(FOOD,true,true)}` +
+    `<div class="group-title">${pick(T.drinkGroup)}</div>${renderSections(orderedDrinks(),false,false)}`;
 
   document.getElementById("tapHintText").textContent = pick(T.tapHint);
   document.getElementById("tapHint").classList.toggle("show", !localStorage.getItem("lesouk_hint"));
+  document.getElementById("scrollCueText").textContent = pick(T.scrollCue);
 
   renderCats();
   renderFilters();
