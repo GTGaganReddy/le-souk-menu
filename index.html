@@ -166,6 +166,10 @@
   .corner-tags{position:absolute;top:-9px;right:14px;display:flex;gap:6px;z-index:2}
   .corner-tags .badge{background:#161310;box-shadow:0 3px 10px rgba(0,0,0,.5)}
   .corner-tags .badge.b-chef{background:var(--gold);color:var(--black)}
+  .badge.chefface{padding:0;width:30px;height:30px;border-radius:50%;overflow:hidden;
+    border:2px solid var(--gold);box-shadow:0 3px 10px rgba(0,0,0,.55);align-self:center}
+  .badge.chefface img{width:100%;height:100%;object-fit:cover;display:block}
+  .corner-tags .chefface{margin-top:-3px}
 
   /* ---- Dish / drink detail sheet (half screen) ---- */
   .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);
@@ -207,14 +211,13 @@
   .taphint.show{display:flex;animation:fabin .5s ease}
   .taphint svg{flex:0 0 auto}
 
-  /* animated scroll-down cue */
-  .scrollcue{position:fixed;left:50%;bottom:22px;z-index:25;pointer-events:none;
-    display:flex;flex-direction:column;align-items:center;gap:3px;
+  /* animated scroll-down cue (in flow, under the hero) */
+  .scrollcue{display:flex;flex-direction:column;align-items:center;gap:2px;margin:18px auto 2px;
     color:var(--gold-bright);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;
-    text-shadow:0 2px 10px rgba(0,0,0,.8);transition:opacity .45s;animation:bob 1.7s ease-in-out infinite}
+    transition:opacity .4s,max-height .4s;animation:bob 1.7s ease-in-out infinite;overflow:hidden;max-height:60px}
   .scrollcue svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2}
-  .scrollcue.hide{opacity:0}
-  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+  .scrollcue.hide{opacity:0;max-height:0;margin:0 auto;pointer-events:none}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
   /* ---- Add (+) button on each row ---- */
   .item .add{flex:0 0 auto;width:30px;height:30px;border-radius:50%;cursor:pointer;
@@ -310,6 +313,10 @@
     <figure><a href="#sec-tajines"><img src="images/hero-tajine.jpg" alt="Tajine"><figcaption id="cap1">Tajine</figcaption></a></figure>
     <figure><a href="#sec-couscous"><img src="images/hero-couscous.jpg" alt="Couscous"><figcaption id="cap2">Couscous</figcaption></a></figure>
   </div>
+  <div class="scrollcue" id="scrollCue" aria-hidden="true">
+    <span id="scrollCueText">Speisekarte</span>
+    <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
   <div class="taphint" id="tapHint">
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11V6a2 2 0 114 0v5m0-3a2 2 0 114 0v3m0 0a2 2 0 114 0v3a7 7 0 01-7 7h-2a7 7 0 01-5-2l-3-3a2 2 0 113-3l2 2"/></svg>
     <span id="tapHintText"></span>
@@ -335,11 +342,6 @@
   </div>
   <div class="copyright" id="copy"></div>
 </footer>
-
-<div class="scrollcue" id="scrollCue" aria-hidden="true">
-  <span id="scrollCueText">Speisekarte</span>
-  <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-</div>
 
 <div class="overlay" id="overlay"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detail">
@@ -615,9 +617,16 @@ function itemTags(it, prefix){
   if(tags.includes("vegan") && !tags.includes("veg")) tags.push("veg");
   return tags;
 }
-function badgesHtml(tags){
-  const show=tags.filter(t=>t!=="alkfrei" && !(t==="veg"&&tags.includes("vegan")));
-  return show.map(t=>`<span class="badge b-${t}">${pick(T.tags[t])}</span>`).join("");
+function tagChip(t){
+  return t==="chef"
+    ? `<span class="badge chefface" title="${pick(T.tags.chef)}"><img src="images/moe.jpg" alt="${pick(T.tags.chef)}"></span>`
+    : `<span class="badge b-${t}">${pick(T.tags[t])}</span>`;
+}
+function displayTags(tags){ return tags.filter(t=>t!=="alkfrei" && !(t==="veg"&&tags.includes("vegan"))); }
+function badgesHtml(tags){  // popup: chef shows Moe's face + label
+  return displayTags(tags).map(t=> t==="chef"
+    ? `<span class="badge chefface"><img src="images/moe.jpg" alt=""></span><span class="badge b-chef">${pick(T.tags.chef)}</span>`
+    : `<span class="badge b-${t}">${pick(T.tags[t])}</span>`).join("");
 }
 function renderItems(items, prefix, showDesc, thumb){
   return items.map((it,idx)=>{
@@ -629,8 +638,8 @@ function renderItems(items, prefix, showDesc, thumb){
     const attr = tap ? ` data-uid="${uid}" role="button" tabindex="0"` : "";
     const tags = itemTags(it, prefix);
     const tagAttr = tags.length ? ` data-tags="${tags.join(' ')}"` : "";
-    const showTags = tags.filter(t=>t!=="alkfrei" && !(t==="veg"&&tags.includes("vegan")));
-    const corner = showTags.length ? `<span class="corner-tags">${showTags.map(t=>`<span class="badge b-${t}">${pick(T.tags[t])}</span>`).join("")}</span>` : "";
+    const showTags = displayTags(tags);
+    const corner = showTags.length ? `<span class="corner-tags">${showTags.map(tagChip).join("")}</span>` : "";
     const thumbHtml = (thumb && it.img) ? `<div class="card-thumb" style="background-image:url('${it.img}')"></div>` : "";
     return `<div class="item card${tap?" tap":""}"${attr}${tagAttr}>
         ${thumbHtml}
