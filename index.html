@@ -668,9 +668,10 @@ document.getElementById("filters").addEventListener("click",e=>{
   filter=b.dataset.filter; renderFilters(); applyFilter();
 });
 
-let spy;
+let spy, spyScroll;
 function setupScrollSpy(){
   if(spy) spy.disconnect();
+  if(spyScroll) window.removeEventListener("scroll", spyScroll);
   const cats=document.getElementById("cats");
   const links=[...cats.querySelectorAll("a")];
   const byId=Object.fromEntries(links.map(a=>[a.dataset.target,a]));
@@ -687,6 +688,13 @@ function setupScrollSpy(){
     });
   },{rootMargin:"-130px 0px -68% 0px",threshold:0});
   document.querySelectorAll(".section").forEach(s=>spy.observe(s));
+  // No category is "active" while still up in the hero/intro (above the first section)
+  spyScroll=()=>{
+    const first=document.querySelector("#menu .section");
+    if(first && first.getBoundingClientRect().top > 140) links.forEach(l=>l.classList.remove("active"));
+  };
+  window.addEventListener("scroll", spyScroll, {passive:true});
+  spyScroll();
 }
 
 function scrollToSec(id){
