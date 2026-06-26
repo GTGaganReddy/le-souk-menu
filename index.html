@@ -73,6 +73,8 @@
   html[data-theme="light"] .badge.b-vegan,
   html[data-theme="light"] .badge.b-veg{color:#3f7a3f;border-color:rgba(63,122,63,.45)}
   html[data-theme="light"] .badge.b-spicy{color:#b3502c;border-color:rgba(179,80,44,.45)}
+  /* logo has a baked-in black background → frame it as a tidy dark emblem on cream */
+  html[data-theme="light"] .barlogo img{border-radius:7px;box-shadow:0 0 0 1px var(--line),0 2px 6px rgba(0,0,0,.18)}
   img{display:block;max-width:100%}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
 
@@ -907,6 +909,28 @@ document.getElementById("hero").addEventListener("click",e=>{
   const a=e.target.closest("a"); if(!a) return;
   e.preventDefault(); scrollToSec(a.getAttribute("href").slice(1));
 });
+
+/* ----- hint that the photo row is swipeable: a small back-and-forth nudge ----- */
+const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let nudging=false;
+function nudgeHero(){
+  if(reduceMotion || nudging) return;
+  const h=document.getElementById("hero");
+  if(!h || h.scrollWidth <= h.clientWidth+8) return;   // nothing to scroll
+  nudging=true;
+  h.style.scrollSnapType="none";                       // snap would yank a small peek back to 0
+  h.scrollTo({left:56,behavior:"smooth"});
+  setTimeout(()=>h.scrollTo({left:0,behavior:"smooth"}), 470);
+  setTimeout(()=>{ h.style.scrollSnapType=""; nudging=false; }, 1150);
+}
+// nudge once shortly after open
+setTimeout(nudgeHero, 650);
+// …and again whenever the guest scrolls down and comes back to the top
+let scrolledAway=false;
+window.addEventListener("scroll",()=>{
+  if(window.scrollY>320) scrolledAway=true;
+  else if(window.scrollY<40 && scrolledAway){ scrolledAway=false; setTimeout(nudgeHero,250); }
+},{passive:true});
 
 function render(){
   document.documentElement.lang = lang;
