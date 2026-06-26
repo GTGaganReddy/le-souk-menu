@@ -19,36 +19,67 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<script>document.documentElement.setAttribute("data-theme",(localStorage.getItem("lesouk_theme")==="light")?"light":"dark");</script>
 
 <style>
-  :root{
-    --black:#0b0b0c;
-    --panel:#111114;
-    --gold:#c9a24b;
+  :root,html[data-theme="dark"]{
+    --bg:#0b0b0c;          /* page background */
+    --panel:#111114;       /* sheets / panels */
+    --fill:#c9a24b;        /* gold BUTTON fill (dark text sits on it) */
+    --fill-bright:#e3c275;
+    --gold:#c9a24b;        /* gold used as TEXT / accent */
     --gold-bright:#e3c275;
-    --cream:#e9e3d6;
+    --ink:#14110a;         /* dark text that sits on a gold fill */
+    --cream:#e9e3d6;       /* main text */
     --muted:#a89c84;
     --line:rgba(201,162,75,.28);
+    --bar:rgba(11,11,12,.92);          /* sticky top bar */
+    --card:rgba(255,255,255,.018);     /* menu card background */
+    --chip:#161310;        /* corner badge background */
+    --ph:#0d0d10;          /* image placeholder background */
+    --glow:rgba(201,162,75,.10);
     --maxw:760px;
+  }
+  html[data-theme="light"]{
+    --bg:#f6efe0;
+    --panel:#fffaf0;
+    --fill:#c9a24b;
+    --fill-bright:#d9b65f;
+    --gold:#9a7414;        /* deep bronze – readable on cream */
+    --gold-bright:#86600f;
+    --ink:#14110a;
+    --cream:#34291a;       /* main text (dark brown) */
+    --muted:#6e6450;
+    --line:rgba(160,120,40,.30);
+    --bar:rgba(246,239,224,.92);
+    --card:rgba(120,90,30,.05);
+    --chip:#efe4cd;
+    --ph:#efe7d6;
+    --glow:rgba(201,162,75,.16);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
-    background:var(--black);
+    background:var(--bg);
     color:var(--cream);
     font-family:'Cormorant Garamond',Georgia,serif;
     font-size:19px;
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
-    background-image:radial-gradient(circle at 50% -10%, rgba(201,162,75,.10), transparent 55%);
+    transition:background-color .3s,color .3s;
+    background-image:radial-gradient(circle at 50% -10%, var(--glow), transparent 55%);
   }
+  /* light-mode badge colours need more contrast on cream */
+  html[data-theme="light"] .badge.b-vegan,
+  html[data-theme="light"] .badge.b-veg{color:#3f7a3f;border-color:rgba(63,122,63,.45)}
+  html[data-theme="light"] .badge.b-spicy{color:#b3502c;border-color:rgba(179,80,44,.45)}
   img{display:block;max-width:100%}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
 
   /* ---- Sticky top bar (language + category jump) ---- */
   .topbar{
     position:sticky;top:0;z-index:20;
-    background:rgba(11,11,12,.92);backdrop-filter:blur(9px);
+    background:var(--bar);backdrop-filter:blur(9px);
     border-bottom:1px solid var(--line);
   }
   .lang{
@@ -58,13 +89,19 @@
   }
   .barlogo{position:absolute;left:14px;top:50%;transform:translateY(-50%);line-height:0;display:block}
   .barlogo img{height:34px;width:auto;display:block}
+  .themebtn{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
+    background:transparent;color:var(--gold-bright);cursor:pointer;padding:0;
+    display:flex;align-items:center;justify-content:center;transition:.2s}
+  .themebtn:hover{border-color:var(--gold)}
+  .themebtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2}
   .lang button{
     font-family:'Cinzel',serif;font-size:12px;letter-spacing:1px;
     background:transparent;color:var(--muted);border:1px solid transparent;
     border-radius:999px;padding:5px 12px;cursor:pointer;transition:.2s;
   }
   .lang button:hover{color:var(--gold-bright)}
-  .lang button.active{color:var(--black);background:var(--gold);border-color:var(--gold)}
+  .lang button.active{color:var(--ink);background:var(--fill);border-color:var(--fill)}
 
   /* category jump chips */
   .cats{
@@ -79,7 +116,7 @@
     padding:5px 13px;transition:.2s;white-space:nowrap;
   }
   .cats a:hover{color:var(--gold-bright)}
-  .cats a.active{color:var(--black);background:var(--gold-bright);border-color:var(--gold-bright)}
+  .cats a.active{color:var(--ink);background:var(--fill-bright);border-color:var(--fill-bright)}
 
   /* anchored sections clear the sticky bar (single offset, ~bar height) */
   html{scroll-padding-top:0}
@@ -137,7 +174,7 @@
   .badge{font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;
     padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--gold-bright);
     white-space:nowrap;align-self:center;flex:0 0 auto}
-  .badge.b-chef{background:var(--gold);color:var(--black);border-color:var(--gold)}
+  .badge.b-chef{background:var(--fill);color:var(--ink);border-color:var(--fill)}
   .badge.b-vegan,.badge.b-veg{color:#a7d6a7;border-color:rgba(167,214,167,.4)}
   .badge.b-spicy{color:#e3936f;border-color:rgba(227,147,111,.45)}
   .badges{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 1px}
@@ -150,14 +187,14 @@
     background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;
     padding:7px 15px;cursor:pointer;transition:.2s}
   .filters .fchip:hover{color:var(--gold-bright)}
-  .filters .fchip.active{background:var(--gold);color:var(--black);border-color:var(--gold)}
+  .filters .fchip.active{background:var(--fill);color:var(--ink);border-color:var(--fill)}
 
   /* sheet badges + allergens */
   .shbadges{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
   .shallerg{font-size:14px;color:var(--muted);font-style:italic;margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
 
   .item.card{position:relative;display:flex;gap:14px;align-items:center;width:100%;text-align:left;
-    background:rgba(255,255,255,.018);border:1px solid var(--line);border-radius:14px;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
     padding:13px 15px;margin:14px 0;color:inherit;font:inherit}
   .item.tap{cursor:pointer;transition:.2s}
   .item.tap:hover,.item.tap:active{background:rgba(201,162,75,.07);border-color:rgba(201,162,75,.5)}
@@ -170,8 +207,8 @@
   .item .price small{color:var(--muted);font-size:12px}
   .item .desc{font-style:italic;font-weight:400;font-size:15.5px;color:var(--muted);line-height:1.4}
   .corner-tags{position:absolute;top:-9px;right:14px;display:flex;gap:6px;z-index:2}
-  .corner-tags .badge{background:#161310;box-shadow:0 3px 10px rgba(0,0,0,.5)}
-  .corner-tags .badge.b-chef{background:var(--gold);color:var(--black)}
+  .corner-tags .badge{background:var(--chip);box-shadow:0 3px 10px rgba(0,0,0,.5)}
+  .corner-tags .badge.b-chef{background:var(--fill);color:var(--ink)}
   .badge.chefface{padding:0;width:30px;height:30px;border-radius:50%;overflow:hidden;
     border:2px solid var(--gold);box-shadow:0 3px 10px rgba(0,0,0,.55);align-self:center}
   .badge.chefface img{width:100%;height:100%;object-fit:cover;display:block}
@@ -192,7 +229,7 @@
   .wsheet .wbody{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .sheet .grip{width:42px;height:4px;border-radius:99px;background:var(--line);margin:10px auto 0}
   .sheet .shimg{height:200px;background-size:cover;background-position:center;margin:14px 16px 0;border-radius:12px;border:1px solid var(--line)}
-  .sheet .shimg.ph{display:flex;align-items:center;justify-content:center;background:#0d0d10}
+  .sheet .shimg.ph{display:flex;align-items:center;justify-content:center;background:var(--ph)}
   .sheet .shimg.ph img{width:120px;opacity:.85}
   .sheet .shbody{padding:18px 22px 30px}
   .sheet .shhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -202,15 +239,15 @@
   .sheet .shstory{font-size:18px;color:var(--cream);opacity:.92;margin-top:14px;line-height:1.6}
   .sheet .shstory .lbl{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:block;margin:16px 0 4px}
   .sheet .shclose{position:absolute;top:12px;right:12px;z-index:6;width:34px;height:34px;border-radius:50%;
-    background:rgba(0,0,0,.55);border:1px solid var(--line);color:var(--cream);font-size:22px;cursor:pointer;
+    background:rgba(0,0,0,.55);border:1px solid var(--line);color:#efe7d6;font-size:22px;cursor:pointer;
     line-height:1;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
   .sheet .shclose:hover{color:var(--gold-bright);border-color:var(--gold)}
   .shaction{margin-top:22px;display:flex;align-items:center;gap:16px}
   .shaction .shadd{display:inline-flex;align-items:center;gap:8px;
     font-family:'Cinzel',serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
-    background:var(--gold);color:var(--black);border:1px solid var(--gold);border-radius:999px;
+    background:var(--fill);color:var(--ink);border:1px solid var(--fill);border-radius:999px;
     padding:12px 24px;cursor:pointer;transition:.2s}
-  .shaction .shadd:hover{background:var(--gold-bright);border-color:var(--gold-bright)}
+  .shaction .shadd:hover{background:var(--fill-bright);border-color:var(--fill-bright)}
   .shaction.stepper .wq{width:36px;height:36px;font-size:22px}
   .shaction .shqty{font-family:'Cinzel',serif;font-size:22px;color:var(--gold-bright);min-width:22px;text-align:center}
   body.locked{overflow:hidden}
@@ -238,18 +275,18 @@
     font-size:19px;line-height:1;display:inline-flex;align-items:center;justify-content:center;
     transition:.18s}
   .item .add:hover{border-color:var(--gold)}
-  .item .add.on{background:var(--gold);color:var(--black);border-color:var(--gold)}
+  .item .add.on{background:var(--fill);color:var(--ink);border-color:var(--fill)}
 
   /* ---- Floating "my selection" button ---- */
   .fab{position:fixed;right:16px;bottom:18px;z-index:30;
     display:none;align-items:center;gap:9px;
-    background:var(--gold);color:var(--black);border:none;border-radius:999px;
+    background:var(--fill);color:var(--ink);border:none;border-radius:999px;
     padding:12px 18px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5);
     font-family:'Cinzel',serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
   .fab.show{display:inline-flex;animation:fabin .3s ease}
   @keyframes fabin{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
   .fab svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
-  .fab .fab-count{background:var(--black);color:var(--gold-bright);border-radius:999px;
+  .fab .fab-count{background:var(--ink);color:var(--fill-bright);border-radius:999px;
     min-width:21px;height:21px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;
     font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px}
 
@@ -309,6 +346,7 @@
     <button data-lang="en">EN</button>
     <button data-lang="it">IT</button>
     <button data-lang="sl">SL</button>
+    <button class="themebtn" id="themeBtn" type="button" aria-label="Hell / Dunkel umschalten"></button>
   </nav>
   <nav class="cats" id="cats" aria-label="Kategorien"></nav>
 </div>
@@ -899,9 +937,26 @@ function render(){
 }
 
 document.getElementById("lang").addEventListener("click",e=>{
-  const b=e.target.closest("button"); if(!b) return;
+  const b=e.target.closest("button[data-lang]"); if(!b) return;
   lang=b.dataset.lang; localStorage.setItem("lesouk_lang",lang); render();
 });
+
+/* ----- light / dark theme ----- */
+const SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.8 4.8l1.7 1.7M17.5 17.5l1.7 1.7M19.2 4.8l-1.7 1.7M6.5 17.5l-1.7 1.7"/></svg>';
+const MOON='<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>';
+let theme = localStorage.getItem("lesouk_theme") || "dark";
+if(theme!=="light") theme="dark";
+function applyTheme(){
+  document.documentElement.setAttribute("data-theme", theme);
+  // show the icon for the mode you'd switch TO
+  document.getElementById("themeBtn").innerHTML = theme==="dark" ? SUN : MOON;
+}
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  theme = theme==="dark" ? "light" : "dark";
+  localStorage.setItem("lesouk_theme", theme);
+  applyTheme();
+});
+applyTheme();
 
 // Austria → German first by default. A returning visitor's manual choice is kept.
 lang = localStorage.getItem("lesouk_lang") || "de";

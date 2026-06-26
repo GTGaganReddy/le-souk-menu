@@ -5,6 +5,7 @@ Eine professionelle, mehrsprachige Online-Speisekarte für **Le Souk · Café-Bi
 
 - **Sprachen:** Deutsch · English · Italiano · Slovenščina (Umschalter oben)
 - **Design:** Gold auf Schwarz, passend zur Visitenkarte; Script-Schrift „Le Souk“
+- **Hell-/Dunkelmodus:** Umschalter (Sonne/Mond) oben rechts; die Wahl wird am Gerät gespeichert. Standard ist der Dunkelmodus.
 - **Optimiert für Handy** (der QR-Code führt direkt hierher)
 
 ## Auf GitHub Pages veröffentlichen (für den QR-Code)
